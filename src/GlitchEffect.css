@@ -1,0 +1,168 @@
+/* src/GlitchEffect.css */
+/* Glitch text container setup */
+.glitch-container {
+	position: relative;
+	display: inline-block;
+}
+
+/* Base text styling */
+.glitch-text {
+	display: inline-block;
+	position: relative;
+}
+
+/* Red glitch layer */
+.glitch-red {
+	position: absolute;
+	top: 0;
+	left: 0;
+	color: #ff0033;
+	opacity: 0.4;
+	animation: glitch-anim-1 0.3s infinite linear alternate-reverse;
+	transform: translateX(1px);
+}
+
+/* Blue glitch layer */
+.glitch-blue {
+	position: absolute;
+	top: 0;
+	left: 0;
+	color: #00aaff;
+	opacity: 0.4;
+	animation: glitch-anim-2 0.4s infinite linear alternate-reverse;
+	transform: translateX(-1px);
+}
+
+/* Glitch animation keyframes */
+@keyframes glitch-anim-1 {
+	0% {
+		clip-path: inset(20% 0 80% 0);
+	}
+
+	20% {
+		clip-path: inset(60% 0 1% 0);
+	}
+
+	40% {
+		clip-path: inset(25% 0 60% 0);
+	}
+
+	60% {
+		clip-path: inset(10% 0 50% 0);
+	}
+
+	80% {
+		clip-path: inset(40% 0 43% 0);
+	}
+
+	100% {
+		clip-path: inset(5% 0 70% 0);
+	}
+}
+
+@keyframes glitch-anim-2 {
+	0% {
+		clip-path: inset(80% 0 20% 0);
+	}
+
+	20% {
+		clip-path: inset(20% 0 70% 0);
+	}
+
+	40% {
+		clip-path: inset(50% 0 30% 0);
+	}
+
+	60% {
+		clip-path: inset(70% 0 10% 0);
+	}
+
+	80% {
+		clip-path: inset(10% 0 60% 0);
+	}
+
+	100% {
+		clip-path: inset(30% 0 10% 0);
+	}
+}
+
+/* Scanlines */
+.scanlines {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	pointer-events: none;
+	z-index: 10;
+	opacity: 0.2;
+}
+
+.scanlines::before {
+	content: "";
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	background: linear-gradient(to bottom,
+			transparent 50%,
+			rgba(0, 0, 0, 0.02) 51%);
+	background-size: 100% 4px;
+	animation: scanline 0.15s infinite linear;
+}
+
+@keyframes scanline {
+	0% {
+		transform: translateY(0);
+	}
+
+	100% {
+		transform: translateY(4px);
+	}
+}
+
+/* Enhanced button styles */
+.game-button {
+	background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+	border: 2px solid rgba(255, 255, 255, 0.2);
+	border-radius: 0.5rem;
+	color: white;
+	font-weight: bold;
+	padding: 0.75rem 1.5rem;
+	transition: all 0.2s;
+	position: relative;
+	overflow: hidden;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.game-button:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.game-button:active {
+	transform: translateY(1px);
+}
+
+.game-button::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+	transform: translateX(-100%);
+}
+
+.game-button:hover::after {
+	animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+	100% {
+		transform: translateX(100%);
+	}
+}
