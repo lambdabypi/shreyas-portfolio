@@ -89,7 +89,7 @@ code {
 }
 
 /* For animated glow effect on hover */
-.glass-card:hover {
+.pulse-on-hover:hover {
   animation: pulse 2s infinite;
 }
 

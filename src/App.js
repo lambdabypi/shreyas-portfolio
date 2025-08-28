@@ -1,4 +1,4 @@
-import InteractivePortfolio from './components/InteractivePortfolio';
+import InteractivePortfolio from './InteractivePortfolio';
 
 function App() {
   return (

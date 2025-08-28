@@ -1,5 +1,6 @@
-// src/components/GlassNavComponents.js
+// src/components/chat/ChatComponents.js
 import { useState, useEffect } from 'react';
+import { usePortfolio } from '../../context/PortfolioContext';
 import {
 	XIcon,
 	ChatIcon,
@@ -9,96 +10,11 @@ import {
 	ChevronDownIcon,
 	SendIcon,
 	ArrowRightIcon
-} from './icons';
+} from '../icons';
 
-// Glass Navigation Bar with animation enhancements
-export const GlassNavigation = ({ activeSection, changeSection }) => {
-	const [hoveredSection, setHoveredSection] = useState(null);
-
-	return (
-		<nav className="fixed top-4 left-4 right-4 z-30 glass-nav backdrop-blur-xl rounded-xl shadow-lg border border-white/20 transition-all duration-300">
-			<div className="flex justify-between items-center px-5 py-3">
-				<div className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-					Shreyas Sreenivas
-				</div>
-				<div className="flex space-x-2">
-					<GlassNavButton
-						label="Projects"
-						onClick={() => changeSection('projects')}
-						active={activeSection === 'projects'}
-						onHover={() => setHoveredSection('projects')}
-						onLeave={() => setHoveredSection(null)}
-						isHovered={hoveredSection === 'projects'}
-					/>
-					<GlassNavButton
-						label="Skills"
-						onClick={() => changeSection('skills')}
-						active={activeSection === 'skills'}
-						onHover={() => setHoveredSection('skills')}
-						onLeave={() => setHoveredSection(null)}
-						isHovered={hoveredSection === 'skills'}
-					/>
-					<GlassNavButton
-						label="Experience"
-						onClick={() => changeSection('experience')}
-						active={activeSection === 'experience'}
-						onHover={() => setHoveredSection('experience')}
-						onLeave={() => setHoveredSection(null)}
-						isHovered={hoveredSection === 'experience'}
-					/>
-					<GlassNavButton
-						label="Contact"
-						onClick={() => changeSection('contact')}
-						active={activeSection === 'contact'}
-						onHover={() => setHoveredSection('contact')}
-						onLeave={() => setHoveredSection(null)}
-						isHovered={hoveredSection === 'contact'}
-					/>
-				</div>
-			</div>
-		</nav>
-	);
-};
-
-// Enhanced Glass Navigation Button with hover effects
-export const GlassNavButton = ({
-	label,
-	onClick,
-	active,
-	onHover,
-	onLeave,
-	isHovered
-}) => {
-	return (
-		<button
-			onClick={onClick}
-			onMouseEnter={onHover}
-			onMouseLeave={onLeave}
-			className={`relative px-4 py-2 rounded-lg transition-all duration-300 overflow-hidden group ${active
-				? 'bg-gradient-to-r from-blue-500/80 to-purple-600/80 text-white shadow-md'
-				: 'text-black-300 hover:text-black'
-				}`}
-		>
-			{/* Background with hover effect */}
-			<span
-				className={`absolute inset-0 bg-black/25 opacity-0 transition-opacity duration-300 ${isHovered && !active ? 'opacity-100' : ''
-					}`}
-			/>
-
-			{/* Button shine effect */}
-			<span
-				className={`absolute inset-0 opacity-0 transition-opacity duration-300 button-shine ${isHovered ? 'opacity-100' : ''
-					}`}
-			/>
-
-			{/* Text content */}
-			<span className="relative z-10">{label}</span>
-		</button>
-	);
-};
-
-// Enhanced Glass Chat Button
-export const GlassChatButton = ({ showAssistant, setShowAssistant }) => {
+// Chat Button Component
+export const ChatButton = () => {
+	const { showAssistant, setShowAssistant } = usePortfolio();
 	const [pulsating, setPulsating] = useState(false);
 
 	// Add a pulsating effect occasionally to attract attention
@@ -115,8 +31,7 @@ export const GlassChatButton = ({ showAssistant, setShowAssistant }) => {
 
 	return (
 		<button
-			className={`fixed bottom-6 right-6 z-30 w-14 h-14 flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform ${pulsating ? 'scale-110 animate-pulse' : 'hover:scale-110'
-				} border border-white/30`}
+			className={`fixed bottom-6 right-6 z-30 w-14 h-14 flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform ${pulsating ? 'scale-110 animate-pulse' : 'hover:scale-110'} border border-white/30`}
 			onClick={() => setShowAssistant(!showAssistant)}
 		>
 			<div className="absolute inset-0 rounded-full overflow-hidden">
@@ -135,27 +50,77 @@ export const GlassChatButton = ({ showAssistant, setShowAssistant }) => {
 	);
 };
 
-// Enhanced Glass Chat Assistant
-export const GlassChatAssistant = ({
-	showAssistant,
-	minimized,
-	setMinimized,
-	setShowAssistant,
-	chatMessages,
-	userMessage,
-	setUserMessage,
-	handleSendMessage,
-	handleKeyPress,
-	messagesContainerRef,
-	handleScroll,
-	messagesEndRef,
-	showNewMessageIndicator,
-	scrollToBottom,
-	isTyping,
-	isProcessing,
-	formatTimestamp,
-	clearChatHistory
-}) => {
+// Chat Message Bubble Component
+export const ChatBubble = ({ message, formatTimestamp }) => {
+	return (
+		<div className={`glass-message ${message.sender}`}>
+			<div className={`glass-message-bubble ${message.sender} ${message.sender === 'bot' ? 'hover:shadow-lg' : 'hover:bg-blue-500/30'} transition-all duration-300`}>
+				{message.sender === 'bot' && (
+					<div className="glass-bot-icon">
+						<SparklesIcon className="h-3 w-3" />
+					</div>
+				)}
+				<div className="glass-message-text">{message.message}</div>
+
+				{message.timestamp && (
+					<div className="glass-message-time">
+						{formatTimestamp(message.timestamp)}
+					</div>
+				)}
+			</div>
+		</div>
+	);
+};
+
+// Suggestion Button Component
+export const SuggestionButton = ({ text, onClick, disabled }) => {
+	const [isHovered, setIsHovered] = useState(false);
+
+	return (
+		<button
+			onClick={onClick}
+			onMouseEnter={() => setIsHovered(true)}
+			onMouseLeave={() => setIsHovered(false)}
+			className={`glass-suggestion-btn relative overflow-hidden group ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md'}`}
+			disabled={disabled}
+		>
+			{/* Button shine effect */}
+			<span
+				className={`absolute inset-0 opacity-0 transition-opacity duration-300 suggestion-shine ${isHovered && !disabled ? 'opacity-100' : ''}`}
+			/>
+
+			{/* Text with arrow icon */}
+			<span className="relative z-10 flex items-center">
+				{text}
+				<ArrowRightIcon className={`w-3 h-3 ml-1 opacity-0 transition-all duration-300 ${isHovered && !disabled ? 'opacity-100 translate-x-1' : '-translate-x-1'}`} />
+			</span>
+		</button>
+	);
+};
+
+// Chat Assistant Component
+export const ChatAssistant = () => {
+	const {
+		showAssistant,
+		minimized,
+		setMinimized,
+		setShowAssistant,
+		chatMessages,
+		userMessage,
+		setUserMessage,
+		handleSendMessage,
+		handleKeyPress,
+		messagesContainerRef,
+		handleScroll,
+		messagesEndRef,
+		showNewMessageIndicator,
+		scrollToBottom,
+		isTyping,
+		isProcessing,
+		formatTimestamp,
+		clearChatHistory
+	} = usePortfolio();
+
 	// Animation states
 	const [showingChat, setShowingChat] = useState(false);
 	const [visibleMessages, setVisibleMessages] = useState([]);
@@ -201,6 +166,13 @@ export const GlassChatAssistant = ({
 	};
 
 	if (!showAssistant) return null;
+
+	// Chat suggestions preset messages
+	const handleSuggestion = (text) => {
+		if (isProcessing) return;
+		setUserMessage(text);
+		setTimeout(handleSendMessage, 100);
+	};
 
 	return (
 		<>
@@ -273,20 +245,7 @@ export const GlassChatAssistant = ({
 									transition: 'opacity 0.3s ease, transform 0.3s ease'
 								}}
 							>
-								<div className={`glass-message-bubble ${msg.sender} ${msg.sender === 'bot' ? 'hover:shadow-lg' : 'hover:bg-blue-500/30'} transition-all duration-300`}>
-									{msg.sender === 'bot' && (
-										<div className="glass-bot-icon">
-											<SparklesIcon className="h-3 w-3" />
-										</div>
-									)}
-									<div className="glass-message-text">{msg.message}</div>
-
-									{msg.timestamp && (
-										<div className="glass-message-time">
-											{formatTimestamp(msg.timestamp)}
-										</div>
-									)}
-								</div>
+								<ChatBubble message={msg} formatTimestamp={formatTimestamp} />
 							</div>
 						))}
 
@@ -342,40 +301,24 @@ export const GlassChatAssistant = ({
 
 						{/* Enhanced suggestion buttons */}
 						<div className="glass-chat-suggestions">
-							<GlassSuggestionButton
+							<SuggestionButton
 								text="Projects"
-								onClick={() => {
-									if (isProcessing) return;
-									setUserMessage("Show me projects");
-									setTimeout(handleSendMessage, 100);
-								}}
+								onClick={() => handleSuggestion("Show me projects")}
 								disabled={isProcessing}
 							/>
-							<GlassSuggestionButton
+							<SuggestionButton
 								text="Skills"
-								onClick={() => {
-									if (isProcessing) return;
-									setUserMessage("Go to skills");
-									setTimeout(handleSendMessage, 100);
-								}}
+								onClick={() => handleSuggestion("Go to skills")}
 								disabled={isProcessing}
 							/>
-							<GlassSuggestionButton
+							<SuggestionButton
 								text="Experience"
-								onClick={() => {
-									if (isProcessing) return;
-									setUserMessage("Show experience");
-									setTimeout(handleSendMessage, 100);
-								}}
+								onClick={() => handleSuggestion("Show experience")}
 								disabled={isProcessing}
 							/>
-							<GlassSuggestionButton
+							<SuggestionButton
 								text="Contact"
-								onClick={() => {
-									if (isProcessing) return;
-									setUserMessage("How can I contact Shreyas?");
-									setTimeout(handleSendMessage, 100);
-								}}
+								onClick={() => handleSuggestion("How can I contact Shreyas?")}
 								disabled={isProcessing}
 							/>
 						</div>
@@ -400,56 +343,12 @@ export const GlassChatAssistant = ({
 	);
 };
 
-// Enhanced Glass Suggestion Button
-export const GlassSuggestionButton = ({ text, onClick, disabled }) => {
-	const [isHovered, setIsHovered] = useState(false);
-
-	return (
-		<button
-			onClick={onClick}
-			onMouseEnter={() => setIsHovered(true)}
-			onMouseLeave={() => setIsHovered(false)}
-			className={`glass-suggestion-btn relative overflow-hidden group ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md'
-				}`}
-			disabled={disabled}
-		>
-			{/* Button shine effect */}
-			<span
-				className={`absolute inset-0 opacity-0 transition-opacity duration-300 suggestion-shine ${isHovered && !disabled ? 'opacity-100' : ''
-					}`}
-			/>
-
-			{/* Text with arrow icon */}
-			<span className="relative z-10 flex items-center">
-				{text}
-				<ArrowRightIcon className={`w-3 h-3 ml-1 opacity-0 transition-all duration-300 ${isHovered && !disabled ? 'opacity-100 translate-x-1' : '-translate-x-1'
-					}`} />
-			</span>
-		</button>
-	);
+// Create a proper named export object
+const ChatComponents = {
+	ChatButton,
+	ChatBubble,
+	SuggestionButton,
+	ChatAssistant
 };
 
-// Enhanced Glass Start Button for the intro section
-export const GlassStartButton = ({ label, onClick, bgClass = "from-blue-400/80 to-purple-500/80", textColorClass = "text-white" }) => {
-	const [isHovered, setIsHovered] = useState(false);
-
-	return (
-		<button
-			onClick={onClick}
-			onMouseEnter={() => setIsHovered(true)}
-			onMouseLeave={() => setIsHovered(false)}
-			className={`px-6 py-3 bg-gradient-to-r ${bgClass} rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 ${textColorClass} font-medium flex items-center justify-center group border border-white/20 backdrop-filter backdrop-blur-sm relative overflow-hidden`}
-		>
-			{/* Button shine effect */}
-			<span
-				className={`absolute inset-0 opacity-0 transition-opacity duration-500 button-shine ${isHovered ? 'opacity-100' : ''
-					}`}
-			/>
-
-			{/* Text content */}
-			<span className="relative z-10">{label}</span>
-
-			<ArrowRightIcon className="w-4 h-4 ml-2 relative z-10 transform transition-transform duration-300 group-hover:translate-x-1" />
-		</button>
-	);
-};
+export default ChatComponents;
