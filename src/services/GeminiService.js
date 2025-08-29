@@ -1,4 +1,3 @@
-
 // src/services/GeminiService.js
 class GeminiService {
 	constructor() {
@@ -203,7 +202,69 @@ class GeminiService {
 			return "Shreyas currently works as a Data Engineer & AI Developer at Intelligent DataWorks, where he architected an HR management platform that improved system architecture by 30%. He's also a Co-Founder at Clau API, developing financial platforms with AI capabilities. Would you like to see more details in the Experience section?";
 		}
 
-		// Keep all your other existing fallback responses
+		// Education queries
+		if (this.containsAny(lowerMsg, ['education', 'study', 'degree', 'school', 'university', 'college', 'academic'])) {
+			return "Shreyas holds an MS in Data Analytics Engineering from Northeastern University (2023-2025) and a BE in AI and ML from BMSIT&M (2019-2023). His academic background combines strong fundamentals in AI with advanced data analytics skills.";
+		}
+
+		// Skills and technical knowledge queries
+		if (this.containsAny(lowerMsg, ['skills', 'technical', 'programming', 'languages', 'proficiency'])) {
+			return "Shreyas is highly skilled in Python (95%), JavaScript (85%), SQL (90%), and React (80%). He's also proficient in AI/ML technologies like TensorFlow (85%), PyTorch (80%), and scikit-learn (90%), with expertise in Data Engineering (90%) and Cloud technologies like AWS (80%) and Docker (85%).";
+		}
+
+		// Contact queries
+		if (this.containsAny(lowerMsg, ['contact', 'email', 'reach', 'connect', 'message', 'get in touch'])) {
+			return "You can contact Shreyas via email at shreyas.atneu@gmail.com. You can also connect with him on LinkedIn or check out his projects on GitHub. Would you like me to navigate to the Contact section?";
+		}
+
+		// About/Bio queries
+		if (this.containsAny(lowerMsg, ['about', 'bio', 'who', 'person', 'background', 'tell me about'])) {
+			return "Shreyas is a Data Engineer & AI Developer with expertise in AI, machine learning, and data engineering. He holds an MS in Data Analytics Engineering and has professional experience at companies like Intelligent DataWorks and Chipmonk Technologies. He's passionate about building AI-powered solutions with practical applications.";
+		}
+
+		// Specific project queries
+		if (this.containsAny(lowerMsg, ['medical', 'multi-agent', 'healthcare', 'agent'])) {
+			return "Shreyas's Medical Multi-Agent Framework is a sophisticated system using Python, PyTorch and Langchain that integrates general-purpose and fine-tuned LLMs with critique mechanisms. The project achieved 92% alignment with healthcare expertise requirements and demonstrates his ability to build complex AI systems for specialized domains.";
+		}
+
+		if (this.containsAny(lowerMsg, ['video', 'classifier', 'ad', 'multimodal'])) {
+			return "The Multimodal Video Ad Classifier project analyzes 150 video ads through video frames, text descriptions, and transcriptions using Python, TensorFlow and OpenCV. It achieved an impressive 81.43% agreement with human coders, showing Shreyas's expertise in computer vision and multimodal AI.";
+		}
+
+		if (this.containsAny(lowerMsg, ['glioma', 'medical', 'classification', 'diagnostic'])) {
+			return "Shreyas's ML-based Glioma Classification project is a medical diagnostic tool using Python, scikit-learn and Pandas that classifies glioma patients as LGG or GBM from 862 patient records. The project achieved 99% accuracy with k-NN and Multinomial Naive Bayes algorithms, demonstrating his ability to build high-accuracy medical AI systems.";
+		}
+
+		// Technical skills specific queries
+		if (this.containsAny(lowerMsg, ['python', 'programming'])) {
+			return "Python is Shreyas's strongest programming language (95% proficiency). He's used it extensively in projects like the Medical Multi-Agent Framework and ML-based Glioma Classification, leveraging libraries like PyTorch, TensorFlow, scikit-learn, and Pandas.";
+		}
+
+		if (this.containsAny(lowerMsg, ['machine learning', 'ml', 'ai', 'artificial intelligence', 'models'])) {
+			return "Shreyas has extensive experience in Machine Learning and AI (90% proficiency), having worked with technologies like TensorFlow, PyTorch, and scikit-learn. His projects demonstrate expertise in both traditional ML algorithms and modern deep learning approaches.";
+		}
+
+		if (this.containsAny(lowerMsg, ['data', 'engineering', 'database', 'sql'])) {
+			return "Shreyas is highly skilled in Data Engineering (90%) and Database Design (85%), with proficiency in SQL (90%). At Intelligent DataWorks, he architected an HR management platform using PostgreSQL, and at Chipmonk Technologies, he built a MySQL database for construction metrics.";
+		}
+
+		if (this.containsAny(lowerMsg, ['cloud', 'aws', 'docker', 'deployment'])) {
+			return "Shreyas has strong cloud computing skills, including AWS (80%) and Docker (85%). At Clau API, he deployed applications on AWS EC2 and built a CICD pipeline at Chipmonk Technologies, demonstrating his ability to create robust, scalable infrastructure.";
+		}
+
+		// Personal questions
+		if (this.containsAny(lowerMsg, ['hobby', 'interest', 'free time', 'passion', 'enjoy'])) {
+			return "While Shreyas is passionate about AI and technology, he also values maintaining a well-rounded life with interests outside of work. For specific details about his personal hobbies and interests, you might want to connect with him directly through the contact section.";
+		}
+
+		if (this.containsAny(lowerMsg, ['located', 'location', 'live', 'based', 'where'])) {
+			return "Shreyas is currently based in Boston, USA, where he works as a Data Engineer & AI Developer at Intelligent DataWorks. Previously, he was located in Bangalore, India, during his time at Chipmonk Technologies.";
+		}
+
+		// Resume/CV queries
+		if (this.containsAny(lowerMsg, ['resume', 'cv', 'download', 'pdf'])) {
+			return "This portfolio provides a comprehensive overview of Shreyas's skills, projects, and experience. If you're interested in a downloadable resume or want to discuss specific opportunities, I recommend reaching out to him directly through the contact section.";
+		}
 
 		// Default response
 		return "I'm here to help you explore Shreyas's portfolio. You can ask about his projects, skills, experience, or education. Or I can help you navigate to different sections of the portfolio. What would you like to know?";
