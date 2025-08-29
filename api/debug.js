@@ -1,4 +1,10 @@
 // api/debug.js
+
+// Specify Node.js runtime
+export const config = {
+	runtime: 'nodejs18.x'
+};
+
 module.exports = (req, res) => {
 	console.log('Debug endpoint called');
 
@@ -34,7 +40,8 @@ module.exports = (req, res) => {
 				geminiKeyExists: !!process.env.GEMINI_API_KEY,
 				// Only show key length for diagnostic purposes, never the actual key
 				geminiKeyLength: process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.length : 0,
-				region: process.env.VERCEL_REGION || 'not set'
+				region: process.env.VERCEL_REGION || 'not set',
+				nodeVersion: process.version || 'not available'
 			},
 
 			// Request information
