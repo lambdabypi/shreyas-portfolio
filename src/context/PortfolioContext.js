@@ -58,7 +58,7 @@ export const PortfolioProvider = ({ children }) => {
 	};
 
 	// Handle chat messages
-	const handleSendMessage = () => {
+	const handleSendMessage = async () => {
 		if (!userMessage.trim() || isProcessing) return;
 
 		// When user sends a message, we should scroll to bottom automatically
@@ -79,42 +79,39 @@ export const PortfolioProvider = ({ children }) => {
 		setIsTyping(true);
 		setIsProcessing(true);
 
-		// Process message with GeminiService
-		setTimeout(async () => {
-			try {
-				// Get response from GeminiService (fallback used for demo)
-				const { response, shouldNavigate, targetSection } =
-					geminiServiceInstance.getFallbackResponse(userMsg);
+		try {
+			// Process message with GeminiService
+			const { response, shouldNavigate, targetSection } =
+				await geminiServiceInstance.generateResponse(userMsg);
 
-				// Handle navigation intents
-				if (shouldNavigate && targetSection) {
-					setTimeout(() => changeSection(targetSection), 500);
-				}
-
-				// Add bot response
-				setChatMessages(prev => [...prev, {
-					id: prev.length,
-					sender: 'bot',
-					message: response,
-					isGeminiResponse: true,
-					timestamp: new Date().toISOString()
-				}]);
-			} catch (error) {
-				console.error('Error processing message:', error);
-				// Add error message
-				setChatMessages(prev => [...prev, {
-					id: prev.length,
-					sender: 'bot',
-					message: "I'm having trouble processing your request. Please try again.",
-					isGeminiResponse: false,
-					timestamp: new Date().toISOString()
-				}]);
-			} finally {
-				// Reset typing indicators
-				setIsTyping(false);
-				setIsProcessing(false);
+			// Handle navigation intents
+			if (shouldNavigate && targetSection) {
+				setTimeout(() => changeSection(targetSection), 500);
 			}
-		}, 1000 + Math.random() * 500);
+
+			// Add bot response
+			setChatMessages(prev => [...prev, {
+				id: prev.length,
+				sender: 'bot',
+				message: response,
+				isGeminiResponse: true,
+				timestamp: new Date().toISOString()
+			}]);
+		} catch (error) {
+			console.error('Error processing message:', error);
+			// Add error message
+			setChatMessages(prev => [...prev, {
+				id: prev.length,
+				sender: 'bot',
+				message: "I'm having trouble processing your request. Please try again.",
+				isGeminiResponse: false,
+				timestamp: new Date().toISOString()
+			}]);
+		} finally {
+			// Reset typing indicators
+			setIsTyping(false);
+			setIsProcessing(false);
+		}
 	};
 
 	// Handle key press for chat
