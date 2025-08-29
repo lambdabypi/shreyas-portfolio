@@ -1,3 +1,4 @@
+
 // src/services/GeminiService.js
 class GeminiService {
 	constructor() {
@@ -10,14 +11,10 @@ class GeminiService {
 			experience: ['experience', 'job', 'career', 'position', 'role', 'employment', 'company', 'workplace']
 		};
 
-		// For debugging purposes
-		console.log('GeminiService initialized, window.location:',
-			window.location ? {
-				host: window.location.host,
-				hostname: window.location.hostname,
-				pathname: window.location.pathname,
-				protocol: window.location.protocol
-			} : 'Not available');
+		// Log hostname for debugging
+		if (typeof window !== 'undefined') {
+			console.log('Current hostname:', window.location.hostname);
+		}
 	}
 
 	/**
@@ -47,10 +44,13 @@ class GeminiService {
 		const { shouldNavigate, targetSection } = this.detectNavigationIntent(userMessage);
 
 		try {
-			// Use absolute URL for testing
-			const apiUrl = 'https://shreyas-portfolio-gold.vercel.app/api/gemini';
-			console.log('Calling API at:', apiUrl); // Debug log
+			// Get the base URL - this is crucial for cross-origin requests
+			const baseUrl = this.getApiBaseUrl();
+			const apiUrl = `${baseUrl}/api/gemini`;
 
+			console.log('Calling API at:', apiUrl);
+
+			// Call the serverless function
 			const response = await fetch(apiUrl, {
 				method: 'POST',
 				headers: {
@@ -62,27 +62,25 @@ class GeminiService {
 				})
 			});
 
-			// Log response status for debugging
-			console.log('API response status:', response.status);
-
 			if (!response.ok) {
-				// Try to get error text if available
+				// Try to get error text
 				let errorText = 'No error details available';
 				try {
 					errorText = await response.text();
 				} catch (e) {
 					console.error('Failed to get error text:', e);
 				}
+
 				console.error('API Response Error:', {
 					status: response.status,
 					statusText: response.statusText,
 					errorText
 				});
+
 				throw new Error(`API request failed: ${response.status}`);
 			}
 
 			const data = await response.json();
-			console.log('API response data received');
 
 			// Extract the generated text
 			const generatedText = data.message;
@@ -94,16 +92,35 @@ class GeminiService {
 		} catch (error) {
 			console.error('Error calling Gemini API:', error);
 			// Log detailed error info
-			console.error('Error details:', {
-				message: error.message,
-				stack: error.stack,
-				time: new Date().toISOString()
-			});
+			console.error('Error details:', error);
 
 			// Fallback to your existing method if API fails
-			console.log('Using fallback response method');
 			return this.getFallbackResponse(userMessage);
 		}
+	}
+
+	/**
+	 * Get the base URL for API calls
+	 * @returns {string} The base URL
+	 */
+	getApiBaseUrl() {
+		// If running in browser
+		if (typeof window !== 'undefined') {
+			// Get current hostname and protocol
+			const protocol = window.location.protocol;
+			const hostname = window.location.hostname;
+
+			// If in development
+			if (hostname === 'localhost' || hostname === '127.0.0.1') {
+				return `${protocol}//${hostname}:${window.location.port}`;
+			}
+
+			// If in production, use same origin
+			return `${protocol}//${hostname}`;
+		}
+
+		// Default fallback
+		return '';
 	}
 
 	/**
