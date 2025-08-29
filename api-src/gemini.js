@@ -40,7 +40,7 @@ export default async function handler(req, res) {
 
 		// Your portfolio context - this should match your existing context
 		const PORTFOLIO_CONTEXT = `
-      You are an AI assistant named Gemini Flash 2.5 for Shreyas Sreenivas's interactive portfolio website.
+      You are an AI assistant named Shre-Oracle for Shreyas Sreenivas's interactive portfolio website.
       
       About Shreyas:
       - MS in Data Analytics Engineering from Northeastern University (2023-2025)
@@ -96,7 +96,7 @@ export default async function handler(req, res) {
 
 		// Use native fetch instead of node-fetch
 		const apiResponse = await fetch(
-			`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
+			`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
 			{
 				method: 'POST',
 				headers: {
