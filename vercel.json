@@ -38,13 +38,5 @@
 			"src": "^/(.*)",
 			"dest": "/index.html"
 		}
-	],
-	"functions": {
-		"api/gemini.js": {
-			"runtime": "nodejs18.x"
-		},
-		"api/debug.js": {
-			"runtime": "nodejs18.x"
-		}
-	}
+	]
 }
