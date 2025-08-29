@@ -22,7 +22,7 @@ export const PortfolioProvider = ({ children }) => {
 		{
 			id: 0,
 			sender: 'bot',
-			message: "Hi there! I'm The Shre-Oracle, Shreyas's portfolio assistant. Ask me anything about his projects, skills, or experience!",
+			message: "Hi there! I'm Chinti, Shreyas's portfolio assistant. Ask me anything about his projects, skills, or experience!",
 			isGeminiResponse: true,
 			timestamp: new Date().toISOString()
 		}
@@ -205,7 +205,7 @@ export const PortfolioProvider = ({ children }) => {
 				{
 					id: 0,
 					sender: 'bot',
-					message: "Hi there! I'm The Shre-Oracle, Shreyas's portfolio assistant. Ask me anything about his projects, skills, or experience!",
+					message: "Hi there! I'm Chinti, Shreyas's portfolio assistant. Ask me anything about his projects, skills, or experience!",
 					isGeminiResponse: true,
 					timestamp: new Date().toISOString()
 				}

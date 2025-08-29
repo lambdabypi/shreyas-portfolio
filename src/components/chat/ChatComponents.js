@@ -190,8 +190,8 @@ export const ChatAssistant = () => {
 								<SparklesIcon className="h-5 w-5 text-white relative z-10" />
 							</div>
 							<div>
-								<div className="text-lg font-bold text-black">The Shre-Oracle</div>
-								<div className="text-xs text-grey-200">Full-Time Portfolio Assistant, Part-Time Divination Guru</div>
+								<div className="text-lg font-bold text-black">Chinti</div>
+								<div className="text-xs text-grey-200">Portfolio Assistant</div>
 							</div>
 						</div>
 						<div className="flex space-x-2">
