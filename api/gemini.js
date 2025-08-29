@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 
 // Specify Node.js runtime
 export const config = {
-	runtime: 'nodejs18.x'
+	runtime: 'nodejs'
 };
 
 module.exports = async (req, res) => {

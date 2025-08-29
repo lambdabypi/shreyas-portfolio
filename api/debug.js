@@ -2,7 +2,7 @@
 
 // Specify Node.js runtime
 export const config = {
-	runtime: 'nodejs18.x'
+	runtime: 'nodejs'
 };
 
 module.exports = (req, res) => {
