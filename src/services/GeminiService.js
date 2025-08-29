@@ -9,6 +9,15 @@ class GeminiService {
 			projects: ['project', 'work', 'portfolio', 'showcase', 'creation', 'built'],
 			experience: ['experience', 'job', 'career', 'position', 'role', 'employment', 'company', 'workplace']
 		};
+
+		// For debugging purposes
+		console.log('GeminiService initialized, window.location:',
+			window.location ? {
+				host: window.location.host,
+				hostname: window.location.hostname,
+				pathname: window.location.pathname,
+				protocol: window.location.protocol
+			} : 'Not available');
 	}
 
 	/**
@@ -38,8 +47,11 @@ class GeminiService {
 		const { shouldNavigate, targetSection } = this.detectNavigationIntent(userMessage);
 
 		try {
-			// Call the serverless function
-			const response = await fetch('/api/gemini', {
+			// Use absolute URL for testing
+			const apiUrl = 'https://shreyas-portfolio-gold.vercel.app/api/gemini';
+			console.log('Calling API at:', apiUrl); // Debug log
+
+			const response = await fetch(apiUrl, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -50,11 +62,27 @@ class GeminiService {
 				})
 			});
 
+			// Log response status for debugging
+			console.log('API response status:', response.status);
+
 			if (!response.ok) {
+				// Try to get error text if available
+				let errorText = 'No error details available';
+				try {
+					errorText = await response.text();
+				} catch (e) {
+					console.error('Failed to get error text:', e);
+				}
+				console.error('API Response Error:', {
+					status: response.status,
+					statusText: response.statusText,
+					errorText
+				});
 				throw new Error(`API request failed: ${response.status}`);
 			}
 
 			const data = await response.json();
+			console.log('API response data received');
 
 			// Extract the generated text
 			const generatedText = data.message;
@@ -65,7 +93,15 @@ class GeminiService {
 			return { response: generatedText, shouldNavigate, targetSection };
 		} catch (error) {
 			console.error('Error calling Gemini API:', error);
+			// Log detailed error info
+			console.error('Error details:', {
+				message: error.message,
+				stack: error.stack,
+				time: new Date().toISOString()
+			});
+
 			// Fallback to your existing method if API fails
+			console.log('Using fallback response method');
 			return this.getFallbackResponse(userMessage);
 		}
 	}

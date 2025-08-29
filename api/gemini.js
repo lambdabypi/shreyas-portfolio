@@ -2,6 +2,8 @@
 const fetch = require('node-fetch');
 
 module.exports = async (req, res) => {
+	console.log('Gemini API endpoint called');
+
 	// Set CORS headers
 	res.setHeader('Access-Control-Allow-Credentials', true);
 	res.setHeader('Access-Control-Allow-Origin', '*');
@@ -13,20 +15,24 @@ module.exports = async (req, res) => {
 
 	// Handle preflight OPTIONS request
 	if (req.method === 'OPTIONS') {
+		console.log('Handling OPTIONS request');
 		res.status(200).end();
 		return;
 	}
 
 	// Only allow POST requests
 	if (req.method !== 'POST') {
+		console.log(`Method not allowed: ${req.method}`);
 		return res.status(405).json({ error: 'Method Not Allowed' });
 	}
 
 	try {
+		console.log('Processing Gemini API request');
 		const { message, history = [] } = req.body;
 
 		// Verify required data
 		if (!message) {
+			console.log('Missing required field: message');
 			return res.status(400).json({ error: 'Message is required' });
 		}
 
@@ -83,7 +89,21 @@ module.exports = async (req, res) => {
 		const apiKey = process.env.GEMINI_API_KEY;
 		if (!apiKey) {
 			console.error('GEMINI_API_KEY is not set');
-			return res.status(500).json({ error: 'API configuration error' });
+			return res.status(500).json({
+				error: 'API configuration error',
+				details: 'API key is missing. Please set the GEMINI_API_KEY environment variable.'
+			});
+		}
+
+		console.log('Calling Gemini API');
+
+		// Check API key format (basic validation)
+		if (apiKey.length < 10) {
+			console.error('GEMINI_API_KEY appears invalid (too short)');
+			return res.status(500).json({
+				error: 'API configuration error',
+				details: 'API key appears to be invalid. Please check the GEMINI_API_KEY environment variable.'
+			});
 		}
 
 		// Call the Gemini API
@@ -116,28 +136,37 @@ module.exports = async (req, res) => {
 
 		if (!apiResponse.ok) {
 			const errorData = await apiResponse.text();
-			console.error('Gemini API error:', errorData);
-			throw new Error(`Gemini API error: ${apiResponse.status}`);
+			console.error('Gemini API error:', {
+				status: apiResponse.status,
+				errorData: errorData || 'No error data available'
+			});
+			throw new Error(`Gemini API error: ${apiResponse.status} - ${errorData}`);
 		}
 
 		const data = await apiResponse.json();
 
 		// Check if we have a valid response
 		if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+			console.error('Invalid response format from Gemini API:', JSON.stringify(data).substring(0, 200) + '...');
 			throw new Error('Invalid response format from Gemini API');
 		}
 
 		const generatedText = data.candidates[0].content.parts[0].text;
+		console.log('Successfully generated response');
 
 		// Return the response
 		return res.status(200).json({
 			message: generatedText
 		});
 	} catch (error) {
-		console.error('Error in Gemini API request:', error);
+		console.error('Error in Gemini API request:', {
+			message: error.message,
+			stack: error.stack
+		});
 		return res.status(500).json({
 			error: 'Failed to process request',
-			details: error.message
+			details: error.message,
+			timestamp: new Date().toISOString()
 		});
 	}
 };
