@@ -9,7 +9,6 @@ import { GlassNavigation } from './components/layout/GlassNavigation';
 // Section components
 import IntroSection from './components/sections/IntroSection';
 import ProjectsSection from './components/sections/ProjectsSection';
-import VRProjectsSection from './components/sections/VRProjectsSection';
 import SkillsSection from './components/sections/SkillsSection';
 import ExperienceSection from './components/sections/ExperienceSection';
 import ContactSection from './components/sections/ContactSection';
@@ -41,8 +40,6 @@ const PortfolioContent = () => {
 				return <IntroSection />;
 			case 'projects':
 				return <ProjectsSection />;
-			case 'vr-projects':
-				return <VRProjectsSection />;
 			case 'skills':
 				return <SkillsSection />;
 			case 'experience':
