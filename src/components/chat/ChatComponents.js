@@ -134,33 +134,28 @@ export const ChatAssistant = () => {
 		}, 100);
 	}, [isProcessing, setUserMessage, handleSendMessage]);
 
-	// Staggered animation for messages on open - improved with useCallback
+	// Staggered animation for messages
 	useEffect(() => {
 		if (showAssistant && !minimized) {
 			setShowingChat(true);
 
-			// Clear and reset visible messages
+			// Clear visible messages
 			setVisibleMessages([]);
 
-			// Staggered animation for messages
-			const timer = setTimeout(() => {
-				let count = 0;
-				const interval = setInterval(() => {
-					if (count < chatMessages.length) {
-						setVisibleMessages(prev => [...prev, count]);
-						count++;
-					} else {
-						clearInterval(interval);
-					}
-				}, 100);
+			// Add messages one by one with delay
+			const timers = [];
+			chatMessages.forEach((_, index) => {
+				const timer = setTimeout(() => {
+					setVisibleMessages(prev => [...prev, index]);
+				}, 100 * index + 300); // 300ms initial delay, then 100ms per message
+				timers.push(timer);
+			});
 
-				return () => clearInterval(interval);
-			}, 300);
-
-			return () => clearTimeout(timer);
+			// Cleanup timers
+			return () => timers.forEach(timer => clearTimeout(timer));
 		} else {
 			setShowingChat(false);
-			// Don't clear visibleMessages here to prevent flicker
+			setVisibleMessages([]);
 		}
 	}, [showAssistant, minimized, chatMessages.length]);
 
@@ -202,7 +197,7 @@ export const ChatAssistant = () => {
 								<SparklesIcon className="h-5 w-5 text-white relative z-10" />
 							</div>
 							<div>
-								<div className="text-lg font-bold text-black">Chinti</div>
+								<div className="text-lg font-bold text-black">Fido</div>
 								<div className="text-xs text-grey-200">Portfolio Assistant</div>
 							</div>
 						</div>
