@@ -1,6 +1,4 @@
 // src/components/layout/GlassNavigation.js
-// Update your existing GlassNavigation component to include VR projects
-
 import { usePortfolio } from '../../context/PortfolioContext';
 
 // Navigation item component
@@ -9,8 +7,8 @@ const NavItem = ({ icon, label, section, active, onClick }) => {
 		<button
 			onClick={onClick}
 			className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 ${active
-					? 'bg-white/20 text-white shadow-md'
-					: 'text-white/70 hover:bg-white/10 hover:text-white'
+				? 'bg-white/20 text-white shadow-md'
+				: 'text-white/70 hover:bg-white/10 hover:text-white'
 				}`}
 		>
 			{icon}
@@ -43,13 +41,23 @@ export const GlassNavigation = () => {
 				</svg>
 			)
 		},
-		// Add VR Projects navigation item
+		// VR Projects navigation item
 		{
 			label: 'VR Projects',
 			section: 'vr-projects',
 			icon: (
 				<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+				</svg>
+			)
+		},
+		// Add Interests & Hobbies navigation item
+		{
+			label: 'Interests',
+			section: 'interests',
+			icon: (
+				<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
 				</svg>
 			)
 		},
@@ -99,3 +107,5 @@ export const GlassNavigation = () => {
 		</div>
 	);
 };
+
+export default GlassNavigation;

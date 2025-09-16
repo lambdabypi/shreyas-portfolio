@@ -1,5 +1,5 @@
 // src/context/PortfolioContext.js
-import React, { createContext, useState, useRef, useEffect, useContext } from 'react';
+import React, { createContext, useState, useRef, useEffect, useContext, useCallback } from 'react';
 import geminiServiceInstance from '../services/GeminiService';
 
 // Create context
@@ -46,9 +46,11 @@ export const PortfolioProvider = ({ children }) => {
 	const messagesContainerRef = useRef(null);
 	const userScrolledRef = useRef(false);
 	const mousePosition = useRef({ x: 0, y: 0 });
+	// Keep track of message IDs to ensure uniqueness
+	const messageIdRef = useRef(1); // Start at 1 since we have a default message at ID 0
 
 	// Handle section changes with animation
-	const changeSection = (section) => {
+	const changeSection = useCallback((section) => {
 		if (isAnimating || section === activeSection) return;
 
 		setIsAnimating(true);
@@ -58,10 +60,10 @@ export const PortfolioProvider = ({ children }) => {
 			setSelectedVRProject(null);
 			setIsAnimating(false);
 		}, 800);
-	};
+	}, [isAnimating, activeSection]);
 
 	// Handle chat messages
-	const handleSendMessage = async () => {
+	const handleSendMessage = useCallback(async () => {
 		if (!userMessage.trim() || isProcessing) return;
 
 		// When user sends a message, we should scroll to bottom automatically
@@ -70,8 +72,10 @@ export const PortfolioProvider = ({ children }) => {
 
 		// Add user message with a unique id
 		const userMsg = userMessage.trim();
+		const userMessageId = messageIdRef.current++; // Get and increment message ID
+
 		setChatMessages(prev => [...prev, {
-			id: prev.length,
+			id: userMessageId,
 			sender: 'user',
 			message: userMsg,
 			timestamp: new Date().toISOString()
@@ -92,9 +96,11 @@ export const PortfolioProvider = ({ children }) => {
 				setTimeout(() => changeSection(targetSection), 500);
 			}
 
-			// Add bot response
+			// Add bot response with a unique ID
+			const botMessageId = messageIdRef.current++; // Get and increment message ID
+
 			setChatMessages(prev => [...prev, {
-				id: prev.length,
+				id: botMessageId,
 				sender: 'bot',
 				message: response,
 				isGeminiResponse: true,
@@ -102,9 +108,11 @@ export const PortfolioProvider = ({ children }) => {
 			}]);
 		} catch (error) {
 			console.error('Error processing message:', error);
-			// Add error message
+			// Add error message with a unique ID
+			const errorMessageId = messageIdRef.current++; // Get and increment message ID
+
 			setChatMessages(prev => [...prev, {
-				id: prev.length,
+				id: errorMessageId,
 				sender: 'bot',
 				message: "I'm having trouble processing your request. Please try again.",
 				isGeminiResponse: false,
@@ -115,32 +123,32 @@ export const PortfolioProvider = ({ children }) => {
 			setIsTyping(false);
 			setIsProcessing(false);
 		}
-	};
+	}, [userMessage, isProcessing, changeSection]);
 
 	// Handle key press for chat
-	const handleKeyPress = (e) => {
+	const handleKeyPress = useCallback((e) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
 			e.preventDefault();
 			handleSendMessage();
 		}
-	};
+	}, [handleSendMessage]);
 
 	// Handle contact form changes
-	const handleContactChange = (e) => {
+	const handleContactChange = useCallback((e) => {
 		const { name, value } = e.target;
-		setContactForm({
-			...contactForm,
+		setContactForm(prev => ({
+			...prev,
 			[name]: value
-		});
-	};
+		}));
+	}, []);
 
 	// Handle contact form submission
-	const handleContactSubmit = () => {
+	const handleContactSubmit = useCallback(() => {
 		// In a real app, you would submit to a backend here
 		console.log('Contact form submitted:', contactForm);
 		alert('Thanks for reaching out! Shreyas will get back to you soon.');
 		setContactForm({ name: '', email: '', message: '' });
-	};
+	}, [contactForm]);
 
 	// Check if we should scroll to bottom when new messages arrive
 	useEffect(() => {
@@ -163,7 +171,7 @@ export const PortfolioProvider = ({ children }) => {
 	}, [hasScrolledToBottom]);
 
 	// Handle scroll events to enable "new message" indicator
-	const handleScroll = () => {
+	const handleScroll = useCallback(() => {
 		if (messagesContainerRef.current) {
 			const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
 			const isAtBottom = scrollHeight - scrollTop - clientHeight < 50;
@@ -177,20 +185,20 @@ export const PortfolioProvider = ({ children }) => {
 				setShouldScrollToBottom(false);
 			}
 		}
-	};
+	}, []);
 
 	// Scroll to bottom manually
-	const scrollToBottom = () => {
+	const scrollToBottom = useCallback(() => {
 		if (messagesEndRef.current) {
 			messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
 			setShouldScrollToBottom(true);
 			userScrolledRef.current = false;
 			setShowNewMessageIndicator(false);
 		}
-	};
+	}, []);
 
 	// Format timestamp for display
-	const formatTimestamp = (timestamp) => {
+	const formatTimestamp = useCallback((timestamp) => {
 		try {
 			return new Date(timestamp).toLocaleTimeString([], {
 				hour: '2-digit',
@@ -199,14 +207,16 @@ export const PortfolioProvider = ({ children }) => {
 		} catch (e) {
 			return '';
 		}
-	};
+	}, []);
 
 	// Clear chat history
-	const clearChatHistory = () => {
+	const clearChatHistory = useCallback(() => {
 		if (window.confirm("Are you sure you want to clear the chat history?")) {
+			const initialMessageId = messageIdRef.current++; // Get and increment message ID
+
 			setChatMessages([
 				{
-					id: 0,
+					id: initialMessageId,
 					sender: 'bot',
 					message: "Hi there! I'm Chinti, Shreyas's portfolio assistant. Ask me anything about his projects, skills, or experience!",
 					isGeminiResponse: true,
@@ -216,7 +226,7 @@ export const PortfolioProvider = ({ children }) => {
 			setShouldScrollToBottom(true);
 			setShowNewMessageIndicator(false);
 		}
-	};
+	}, []);
 
 	// Context value
 	const contextValue = {

@@ -1,5 +1,5 @@
 // src/components/chat/ChatComponents.js
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import {
 	XIcon,
@@ -125,7 +125,16 @@ export const ChatAssistant = () => {
 	const [showingChat, setShowingChat] = useState(false);
 	const [visibleMessages, setVisibleMessages] = useState([]);
 
-	// Staggered animation for messages on open
+	// Memoize the function to prevent recreation on each render
+	const handleSuggestion = useCallback((text) => {
+		if (isProcessing) return;
+		setUserMessage(text);
+		setTimeout(() => {
+			handleSendMessage();
+		}, 100);
+	}, [isProcessing, setUserMessage, handleSendMessage]);
+
+	// Staggered animation for messages on open - improved with useCallback
 	useEffect(() => {
 		if (showAssistant && !minimized) {
 			setShowingChat(true);
@@ -138,7 +147,7 @@ export const ChatAssistant = () => {
 				let count = 0;
 				const interval = setInterval(() => {
 					if (count < chatMessages.length) {
-						setVisibleMessages(prev => [...prev, count]); // Store message indices
+						setVisibleMessages(prev => [...prev, count]);
 						count++;
 					} else {
 						clearInterval(interval);
@@ -151,28 +160,31 @@ export const ChatAssistant = () => {
 			return () => clearTimeout(timer);
 		} else {
 			setShowingChat(false);
-			setVisibleMessages([]);
+			// Don't clear visibleMessages here to prevent flicker
 		}
-	}, [showAssistant, minimized, chatMessages.length]); // Use chatMessages.length to avoid deep comparison
+	}, [showAssistant, minimized, chatMessages.length]);
+
+	// Only clear visible messages when the chat is fully hidden
+	useEffect(() => {
+		if (!showAssistant) {
+			const timer = setTimeout(() => {
+				setVisibleMessages([]);
+			}, 500); // Wait for hide animation to complete
+			return () => clearTimeout(timer);
+		}
+	}, [showAssistant]);
 
 	// Check if message should be animated
-	const isMessageVisible = (index) => {
+	const isMessageVisible = useCallback((index) => {
 		return visibleMessages.includes(index);
-	};
+	}, [visibleMessages]);
 
 	// Get animation delay for each message
-	const getAnimationDelay = (index) => {
+	const getAnimationDelay = useCallback((index) => {
 		return `${50 * index}ms`;
-	};
+	}, []);
 
 	if (!showAssistant) return null;
-
-	// Chat suggestions preset messages
-	const handleSuggestion = (text) => {
-		if (isProcessing) return;
-		setUserMessage(text);
-		setTimeout(handleSendMessage, 100);
-	};
 
 	return (
 		<>
@@ -236,9 +248,10 @@ export const ChatAssistant = () => {
 						ref={messagesContainerRef}
 						onScroll={handleScroll}
 					>
+						{/* Fixed rendering of messages */}
 						{chatMessages.map((msg, idx) => (
 							<div
-								key={idx}
+								key={`msg-${idx}-${msg.id}`}
 								className={`glass-message ${msg.sender} ${isMessageVisible(idx) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
 								style={{
 									transitionDelay: getAnimationDelay(idx),
@@ -287,7 +300,7 @@ export const ChatAssistant = () => {
 								disabled={isProcessing}
 							/>
 							<button
-								onClick={handleSendMessage}
+								onClick={() => handleSendMessage()}
 								className={`glass-chat-send-btn ${userMessage.trim() && !isProcessing ? 'bg-blue-500/80 hover:bg-blue-600/80' : 'bg-gray-500/50'} transition-colors`}
 								disabled={isProcessing || !userMessage.trim()}
 							>

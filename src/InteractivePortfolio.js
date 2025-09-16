@@ -10,6 +10,7 @@ import { GlassNavigation } from './components/layout/GlassNavigation';
 import IntroSection from './components/sections/IntroSection';
 import ProjectsSection from './components/sections/ProjectsSection';
 import VRProjectsSection from './components/sections/VRProjectsSection';
+import InterestsSection from './components/sections/InterestsSection'; // Import the new section
 import SkillsSection from './components/sections/SkillsSection';
 import ExperienceSection from './components/sections/ExperienceSection';
 import ContactSection from './components/sections/ContactSection';
@@ -43,6 +44,8 @@ const PortfolioContent = () => {
 				return <ProjectsSection />;
 			case 'vr-projects':
 				return <VRProjectsSection />;
+			case 'interests': // Add the new case for interests section
+				return <InterestsSection />;
 			case 'skills':
 				return <SkillsSection />;
 			case 'experience':
