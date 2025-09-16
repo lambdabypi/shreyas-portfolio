@@ -138,21 +138,22 @@ export const ChatAssistant = () => {
 	useEffect(() => {
 		if (showAssistant && !minimized) {
 			setShowingChat(true);
-
-			// Clear visible messages
 			setVisibleMessages([]);
 
-			// Add messages one by one with delay
-			const timers = [];
-			chatMessages.forEach((_, index) => {
-				const timer = setTimeout(() => {
-					setVisibleMessages(prev => [...prev, index]);
-				}, 100 * index + 300); // 300ms initial delay, then 100ms per message
-				timers.push(timer);
-			});
+			// Store the current length in a variable to use inside the effect
+			const messagesCount = chatMessages.length;
 
-			// Cleanup timers
-			return () => timers.forEach(timer => clearTimeout(timer));
+			let count = 0;
+			const interval = setInterval(() => {
+				if (count < messagesCount) {
+					setVisibleMessages(prev => [...prev, count]);
+					count++;
+				} else {
+					clearInterval(interval);
+				}
+			}, 100);
+
+			return () => clearInterval(interval);
 		} else {
 			setShowingChat(false);
 			setVisibleMessages([]);
