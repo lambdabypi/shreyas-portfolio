@@ -403,10 +403,10 @@ const ConstellationClickerOverlay = () => {
 								<div
 									key={constellation.id}
 									className={`p-2 rounded text-xs transition-all ${gameData.unlockedConstellations.has(constellation.id)
-										? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-400/50 text-yellow-200'
-										: gameData.level >= constellation.level
-											? 'bg-blue-500/20 border border-blue-400/50 text-blue-200'
-											: 'bg-gray-700/50 text-gray-400 border border-gray-600/50'
+											? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-400/50 text-yellow-200'
+											: gameData.level >= constellation.level
+												? 'bg-blue-500/20 border border-blue-400/50 text-blue-200'
+												: 'bg-gray-700/50 text-gray-400 border border-gray-600/50'
 										}`}
 								>
 									<div className="flex justify-between items-center">
@@ -464,8 +464,8 @@ const ConstellationClickerOverlay = () => {
 								<div
 									key={achievement.id}
 									className={`p-2 rounded text-xs transition-all ${gameData.achievements.has(achievement.id)
-										? 'bg-yellow-500/20 border border-yellow-400/50 text-yellow-200'
-										: 'bg-gray-700/50 text-gray-400 border border-gray-600/50'
+											? 'bg-yellow-500/20 border border-yellow-400/50 text-yellow-200'
+											: 'bg-gray-700/50 text-gray-400 border border-gray-600/50'
 										}`}
 								>
 									<div className="flex items-center gap-1 mb-1">

@@ -206,25 +206,22 @@ const InteractiveBackground = () => {
 
 		// Animation loop
 		const animate = () => {
-			// Clear canvas with background that changes with final constellation
-			const bgOpacity = gameData.unlockedConstellations.has('corona') ? 0.05 : 0.1;
-			ctx.fillStyle = `rgba(15, 23, 42, ${bgOpacity})`;
+			// Keep original white background with subtle transparency
+			ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 			// Update particles
 			particles.current.forEach(particle => {
 				if (particle.isConstellationStar) {
-					// Constellation stars stay in position but can have gentle movement
+					// Constellation stars stay perfectly in position with gentle breathing
 					if (particle.targetX !== null && particle.targetY !== null) {
-						// Very gentle drift to maintain constellation position
-						const dx = particle.targetX - particle.x;
-						const dy = particle.targetY - particle.y;
-						particle.x += dx * 0.02;
-						particle.y += dy * 0.02;
+						// Keep constellation stars exactly in place
+						particle.x = particle.targetX;
+						particle.y = particle.targetY;
 
 						// Add subtle breathing effect to constellation stars
 						const time = Date.now() * 0.001;
-						const breathe = Math.sin(time + particle.starIndex) * 0.5;
+						const breathe = Math.sin(time + particle.starIndex) * 0.3;
 						particle.size = 4 + breathe;
 					}
 				} else {
@@ -233,17 +230,18 @@ const InteractiveBackground = () => {
 					const dy = mousePosition.current.y - particle.y;
 					const distance = Math.sqrt(dx * dx + dy * dy);
 
-					if (distance < 150) {
+					// Reduced mouse influence for gentler interaction
+					if (distance < 100) {
 						const angle = Math.atan2(dy, dx);
-						const force = (150 - distance) / 1500;
+						const force = (100 - distance) / 2000; // Reduced force
 						particle.speedX -= Math.cos(angle) * force;
 						particle.speedY -= Math.sin(angle) * force;
 					}
 
 					particle.x += particle.speedX;
 					particle.y += particle.speedY;
-					particle.speedX *= 0.98;
-					particle.speedY *= 0.98;
+					particle.speedX *= 0.99; // Slightly stronger dampening
+					particle.speedY *= 0.99;
 
 					// Boundary checking
 					if (particle.x < 0 || particle.x > canvas.width) particle.speedX *= -1;
@@ -419,11 +417,6 @@ const InteractiveBackground = () => {
 			<canvas
 				ref={canvasRef}
 				className="absolute inset-0 z-0"
-				style={{
-					background: gameData.unlockedConstellations.has('corona')
-						? 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)'
-						: 'transparent'
-				}}
 				width={dimensions.width}
 				height={dimensions.height}
 			/>
