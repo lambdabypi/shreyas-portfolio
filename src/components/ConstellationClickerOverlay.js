@@ -1,8 +1,11 @@
 // src/components/ConstellationClickerOverlay.js
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Star, Zap, Trophy, TrendingUp, Sparkles, Crown } from 'lucide-react';
+import { usePortfolio } from '../context/PortfolioContext';
 
 const ConstellationClickerOverlay = () => {
+	const { activeSection } = usePortfolio();
+
 	// Game state
 	const [gameData, setGameData] = useState({
 		level: 1,
@@ -339,14 +342,16 @@ const ConstellationClickerOverlay = () => {
 				</div>
 			))}
 
-			{/* Tip for new users */}
-			{showTip && !gameData.gameStarted && (
-				<div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 pointer-events-none">
-					<div className="bg-gradient-to-r from-purple-600/90 to-blue-600/90 backdrop-blur-md rounded-lg p-6 shadow-2xl border border-white/20 animate-pulse">
-						<div className="text-center text-white">
-							<Zap className="w-8 h-8 mx-auto mb-2" />
-							<p className="text-lg font-semibold mb-1">Hidden Portfolio Game!</p>
-							<p className="text-sm opacity-90">Click anywhere to start unlocking constellations</p>
+			{/* Toast-style tip for new users - bottom left corner, only on intro section */}
+			{showTip && !gameData.gameStarted && activeSection === 'intro' && (
+				<div className="fixed bottom-6 left-6 z-40 pointer-events-none">
+					<div className="bg-gradient-to-r from-purple-600/95 to-blue-600/95 backdrop-blur-sm rounded-md px-3 py-2 shadow-lg border border-white/30 animate-pulse max-w-64">
+						<div className="text-white flex items-center gap-2">
+							<Zap className="w-4 h-4 flex-shrink-0" />
+							<div>
+								<p className="text-xs font-medium">Hidden game!</p>
+								<p className="text-xs opacity-80">Click anywhere to unlock constellations</p>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -403,10 +408,10 @@ const ConstellationClickerOverlay = () => {
 								<div
 									key={constellation.id}
 									className={`p-2 rounded text-xs transition-all ${gameData.unlockedConstellations.has(constellation.id)
-											? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-400/50 text-yellow-200'
-											: gameData.level >= constellation.level
-												? 'bg-blue-500/20 border border-blue-400/50 text-blue-200'
-												: 'bg-gray-700/50 text-gray-400 border border-gray-600/50'
+										? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-400/50 text-yellow-200'
+										: gameData.level >= constellation.level
+											? 'bg-blue-500/20 border border-blue-400/50 text-blue-200'
+											: 'bg-gray-700/50 text-gray-400 border border-gray-600/50'
 										}`}
 								>
 									<div className="flex justify-between items-center">
@@ -464,8 +469,8 @@ const ConstellationClickerOverlay = () => {
 								<div
 									key={achievement.id}
 									className={`p-2 rounded text-xs transition-all ${gameData.achievements.has(achievement.id)
-											? 'bg-yellow-500/20 border border-yellow-400/50 text-yellow-200'
-											: 'bg-gray-700/50 text-gray-400 border border-gray-600/50'
+										? 'bg-yellow-500/20 border border-yellow-400/50 text-yellow-200'
+										: 'bg-gray-700/50 text-gray-400 border border-gray-600/50'
 										}`}
 								>
 									<div className="flex items-center gap-1 mb-1">
