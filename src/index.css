@@ -19,7 +19,7 @@ code {
 
 /* Base glass effect for cards */
 .glass-card {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.205);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -115,7 +115,7 @@ code {
 /* Enhanced Glass Header Styles */
 
 .glass-header {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.589);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.18);
