@@ -1,5 +1,5 @@
 // src/components/layout/InteractiveBackground.js
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 
 const InteractiveBackground = () => {
@@ -18,8 +18,8 @@ const InteractiveBackground = () => {
 		unlockedConstellations: new Set()
 	});
 
-	// Constellation definitions
-	const constellations = [
+	// Constellation definitions - memoized to prevent re-creation
+	const constellations = useMemo(() => [
 		{
 			id: 'ursa-minor',
 			name: 'Little Dipper',
@@ -88,7 +88,7 @@ const InteractiveBackground = () => {
 			connections: [[0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6]],
 			color: '#F59E0B'
 		}
-	];
+	], []);
 
 	// Load game data from localStorage
 	useEffect(() => {
@@ -130,8 +130,11 @@ const InteractiveBackground = () => {
 		};
 	}, []);
 
+	// Main animation and canvas setup effect
 	useEffect(() => {
 		const canvas = canvasRef.current;
+		if (!canvas) return;
+
 		const ctx = canvas.getContext('2d');
 
 		// Setup canvas
@@ -355,7 +358,7 @@ const InteractiveBackground = () => {
 			window.removeEventListener('resize', handleResize);
 			cancelAnimationFrame(animationFrameId.current);
 		};
-	}, [dimensions, mousePosition]);
+	}, [dimensions, mousePosition, gameData.unlockedConstellations, constellations]);
 
 	// Separate effect to handle constellation restoration when data changes
 	useEffect(() => {
@@ -404,7 +407,7 @@ const InteractiveBackground = () => {
 				}
 			});
 		});
-	}, [gameData.unlockedConstellations]);
+	}, [gameData.unlockedConstellations, constellations]);
 
 	return (
 		<>
