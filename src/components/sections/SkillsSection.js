@@ -55,7 +55,7 @@ const SkillsSection = () => {
 
 	return (
 		<div className={`transition-opacity duration-800 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
-			<div className="w-full max-w-4xl bg-white/10 backdrop-blur-lg rounded-lg shadow-lg flex flex-col border border-white/30">
+			<div className="w-full max-w-4xl bg-transparent backdrop-blur-lg rounded-lg shadow-lg flex flex-col border border-white/30">
 				<GlassHeader title="Skills & Expertise" />
 
 				<div className="p-6 overflow-y-auto max-h-[80vh] glass-scrollbar">
