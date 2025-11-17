@@ -1,6 +1,6 @@
 // src/components/ConstellationClickerOverlay.js
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Star, Zap, Trophy, TrendingUp, Award, Sparkles, Crown } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { Star, Zap, Trophy, TrendingUp, Sparkles, Crown } from 'lucide-react';
 
 const ConstellationClickerOverlay = () => {
 	// Game state
@@ -24,15 +24,27 @@ const ConstellationClickerOverlay = () => {
 
 	const intervalRef = useRef(null);
 
-	// Constellation definitions
-	const constellations = [
+	// Constellation definitions - memoized to prevent re-creation
+	const constellations = useMemo(() => [
 		{ id: 'ursa-minor', name: 'Little Dipper', level: 5, description: 'Your coding journey begins', color: '#60A5FA' },
 		{ id: 'cassiopeia', name: 'Cassiopeia', level: 10, description: 'The W of wisdom', color: '#A78BFA' },
 		{ id: 'orion', name: 'Orion', level: 15, description: 'The mighty hunter', color: '#34D399' },
 		{ id: 'draco', name: 'Draco', level: 20, description: 'The dragon awakens', color: '#F59E0B' },
 		{ id: 'phoenix', name: 'Phoenix', level: 25, description: 'Rise from the ashes', color: '#EF4444' },
 		{ id: 'corona', name: 'Corona Borealis', level: 30, description: 'The Northern Crown - Master of Portfolio', color: '#F59E0B' }
-	];
+	], []);
+
+	// Achievement definitions - memoized to prevent re-creation
+	const achievementList = useMemo(() => [
+		{ id: 'first-milestone', name: 'First Steps', description: 'Reach Level 5', icon: '🌟' },
+		{ id: 'experienced', name: 'Getting Good', description: 'Reach Level 10', icon: '⭐' },
+		{ id: 'expert', name: 'Portfolio Expert', description: 'Reach Level 25', icon: '🏆' },
+		{ id: 'dedicated-clicker', name: 'Dedicated Visitor', description: 'Click 100 times', icon: '👆' },
+		{ id: 'click-master', name: 'Click Master', description: 'Click 500 times', icon: '💪' },
+		{ id: 'click-legend', name: 'Click Legend', description: 'Click 1000 times', icon: '🔥' },
+		{ id: 'automation-expert', name: 'Automation Pro', description: 'Max auto-clicker to Level 5', icon: '🤖' },
+		{ id: 'power-clicker', name: 'Power User', description: 'Get 5x click multiplier', icon: '⚡' }
+	], []);
 
 	// Load game data from localStorage
 	useEffect(() => {
@@ -142,7 +154,7 @@ const ConstellationClickerOverlay = () => {
 				return newData;
 			});
 		}
-	}, [gameData.experience, gameData.level, gameData.totalClicks, gameData.autoClickerLevel, gameData.clickMultiplier, saveGameData]);
+	}, [gameData.experience, gameData.level, gameData.totalClicks, gameData.autoClickerLevel, gameData.clickMultiplier, saveGameData, constellations]);
 
 	// Create confetti effect
 	const createConfetti = () => {
@@ -239,6 +251,9 @@ const ConstellationClickerOverlay = () => {
 						};
 					}
 					break;
+				default:
+					// No action needed for unknown upgrade types
+					break;
 			}
 
 			saveGameData(newData);
@@ -266,17 +281,6 @@ const ConstellationClickerOverlay = () => {
 		setShowTip(true);
 		window.dispatchEvent(new Event('portfolioClickerUpdate'));
 	};
-
-	const achievements = [
-		{ id: 'first-milestone', name: 'First Steps', description: 'Reach Level 5', icon: '🌟' },
-		{ id: 'experienced', name: 'Getting Good', description: 'Reach Level 10', icon: '⭐' },
-		{ id: 'expert', name: 'Portfolio Expert', description: 'Reach Level 25', icon: '🏆' },
-		{ id: 'dedicated-clicker', name: 'Dedicated Visitor', description: 'Click 100 times', icon: '👆' },
-		{ id: 'click-master', name: 'Click Master', description: 'Click 500 times', icon: '💪' },
-		{ id: 'click-legend', name: 'Click Legend', description: 'Click 1000 times', icon: '🔥' },
-		{ id: 'automation-expert', name: 'Automation Pro', description: 'Max auto-clicker to Level 5', icon: '🤖' },
-		{ id: 'power-clicker', name: 'Power User', description: 'Get 5x click multiplier', icon: '⚡' }
-	];
 
 	return (
 		<>
@@ -445,6 +449,32 @@ const ConstellationClickerOverlay = () => {
 								<div className="font-medium">Click Power x{gameData.clickMultiplier + 1}</div>
 								<div className="text-xs opacity-75">Cost: 200 SP • +{15 * (gameData.clickMultiplier + 1)} XP per click</div>
 							</button>
+						</div>
+					</div>
+
+					{/* Achievements */}
+					<div className="bg-black/30 backdrop-blur-md rounded-lg p-4 shadow-lg border border-white/20 min-w-80">
+						<h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+							<Trophy className="w-4 h-4" />
+							Achievements ({gameData.achievements.size}/{achievementList.length})
+						</h3>
+
+						<div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
+							{achievementList.map((achievement) => (
+								<div
+									key={achievement.id}
+									className={`p-2 rounded text-xs transition-all ${gameData.achievements.has(achievement.id)
+											? 'bg-yellow-500/20 border border-yellow-400/50 text-yellow-200'
+											: 'bg-gray-700/50 text-gray-400 border border-gray-600/50'
+										}`}
+								>
+									<div className="flex items-center gap-1 mb-1">
+										<span className="text-sm">{achievement.icon}</span>
+										<span className="font-medium truncate">{achievement.name}</span>
+									</div>
+									<div className="opacity-75 truncate">{achievement.description}</div>
+								</div>
+							))}
 						</div>
 					</div>
 
