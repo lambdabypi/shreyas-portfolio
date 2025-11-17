@@ -9,7 +9,7 @@ const SkillBar = ({ skill, category }) => {
 	return (
 		<div className="mb-5 last:mb-0">
 			<div className="flex justify-between mb-2">
-				<span className="text-black">{skill.name}</span>
+				<span className="text-white">{skill.name}</span>
 				<span className="text-blue-300 font-medium">{skill.level}%</span>
 			</div>
 
@@ -36,7 +36,7 @@ const CategorySkills = ({ category }) => {
 				<div className={`w-8 h-8 rounded-full bg-gradient-to-r ${categoryColorClass} flex items-center justify-center text-white mr-3`}>
 					{categoryIcon}
 				</div>
-				<h3 className="text-xl font-bold text-black">
+				<h3 className="text-xl font-bold text-white">
 					{category}
 				</h3>
 			</div>
