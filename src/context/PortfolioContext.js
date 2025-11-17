@@ -13,6 +13,7 @@ export const PortfolioProvider = ({ children }) => {
 	const [activeSection, setActiveSection] = useState('intro');
 	const [isAnimating, setIsAnimating] = useState(false);
 	const [selectedProject, setSelectedProject] = useState(null);
+	const [selectedVRProject, setSelectedVRProject] = useState(null); // Added VR project state
 
 	// Chat assistant state
 	const [showAssistant, setShowAssistant] = useState(false);
@@ -53,6 +54,8 @@ export const PortfolioProvider = ({ children }) => {
 		setIsAnimating(true);
 		setTimeout(() => {
 			setActiveSection(section);
+			setSelectedProject(null); // Clear selected project
+			setSelectedVRProject(null); // Clear selected VR project
 			setIsAnimating(false);
 		}, 800);
 	};
@@ -222,6 +225,8 @@ export const PortfolioProvider = ({ children }) => {
 		isAnimating,
 		selectedProject,
 		setSelectedProject,
+		selectedVRProject,        // Added VR project state
+		setSelectedVRProject,     // Added VR project setter
 		changeSection,
 
 		// Chat state

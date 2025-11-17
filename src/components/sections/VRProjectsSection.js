@@ -42,10 +42,10 @@ const VRProjectCard = ({ project, onClick }) => {
 			</div>
 
 			<div className="p-5">
-				<h3 className="text-xl font-bold mb-2 text-black group-hover:text-blue-300 transition-colors">
+				<h3 className="text-xl font-bold mb-2 text-white group-hover:text-blue-300 transition-colors">
 					{project.title}
 				</h3>
-				<p className="text-black-300 text-sm mb-4">
+				<p className="text-white text-opacity-50 text-sm mb-4">
 					{project.description}
 				</p>
 				<div className="flex flex-wrap gap-2">
@@ -65,7 +65,7 @@ const VRProjectCard = ({ project, onClick }) => {
 
 const VRProjectDetail = ({ project, onBack }) => {
 	return (
-		<div className="w-full max-w-4xl bg-white/20 backdrop-blur-lg rounded-lg shadow-lg flex flex-col border border-white/30">
+		<div className="w-full max-w-4xl bg-transparent backdrop-blur-lg rounded-lg shadow-lg flex flex-col border border-white/30">
 			{/* Fixed header */}
 			<GlassHeader title="VR Project Details" />
 
@@ -106,7 +106,7 @@ const VRProjectDetail = ({ project, onBack }) => {
 									key={idx}
 									text={tag}
 									bgColorClass="bg-blue-500/20"
-									textColorClass="text-black-200"
+									textColorClass="text-white text-opacity-80"
 								/>
 							))}
 						</div>
@@ -137,10 +137,10 @@ const VRProjectDetail = ({ project, onBack }) => {
 							{project.title}
 						</h2>
 						<div className="text-blue-400 mb-2 font-medium">{project.period}</div>
-						<p className="text-gray-400 mb-4">
+						<p className="text-white text-opacity-50 mb-4">
 							{project.description}
 						</p>
-						<p className="text-black mb-8">
+						<p className="text-white mb-8">
 							{project.details}
 						</p>
 
@@ -148,7 +148,7 @@ const VRProjectDetail = ({ project, onBack }) => {
 							{project.metrics.map((metric, idx) => (
 								<GlassCard key={idx} className="p-4" hoverEffect={false}>
 									<div className="text-blue-300 mb-1 text-sm font-medium">{metric.label}</div>
-									<div className="text-2xl font-bold text-black">{metric.value}</div>
+									<div className="text-2xl font-bold text-white">{metric.value}</div>
 								</GlassCard>
 							))}
 						</div>
@@ -174,7 +174,7 @@ const VRProjectsSection = () => {
 
 	return (
 		<div className={`transition-opacity duration-800 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
-			<div className="w-full max-w-4xl bg-white/20 backdrop-blur-lg rounded-lg shadow-lg flex flex-col border border-white/30">
+			<div className="w-full max-w-4xl bg-transparent backdrop-blur-lg rounded-lg shadow-lg flex flex-col border border-white/30">
 				{/* Fixed header */}
 				<GlassHeader title="VR & Mixed Reality Projects" />
 

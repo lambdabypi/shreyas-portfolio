@@ -7,7 +7,6 @@ import {
 	GlassSocialButton
 } from '../ui/GlassComponents';
 import {
-	SendIcon,
 	GithubIcon,
 	LinkedInIcon,
 	MailIcon,
@@ -18,21 +17,18 @@ import {
 const ContactSection = () => {
 	const {
 		isAnimating,
-		contactForm,
-		handleContactChange,
-		handleContactSubmit
 	} = usePortfolio();
 
 	return (
 		<div className={`transition-opacity duration-800 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
-			<div className="w-full max-w-4xl bg-white/20 backdrop-blur-lg rounded-lg shadow-lg flex flex-col border border-white/30">
+			<div className="w-full max-w-4xl bg-transparent backdrop-blur-lg rounded-lg shadow-lg flex flex-col border border-white/30">
 				<GlassHeader title="Get In Touch" />
 
-				<div className="p-6 overflow-y-auto max-h-[80vh] glass-scrollbar">
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+				<div className="p-6 items-center overflow-y-auto max-h-[80vh] glass-scrollbar">
+					<div className="gap-8">
 						<div>
 							<GlassCard className="p-5 mb-6">
-								<p className="text-black mb-6">
+								<p className="text-white mb-6">
 									I'm always open to discussing new projects, opportunities, or collaborations. Feel free to reach out through any of the channels below!
 								</p>
 
@@ -71,7 +67,7 @@ const ContactSection = () => {
 							</GlassCard>
 
 							<GlassCard className="p-5">
-								<h3 className="text-lg text-center font-bold text-black mb-4">Connect With Me</h3>
+								<h3 className="text-lg text-center font-bold text-white mb-4">Connect With Me</h3>
 								<div className="flex justify-center space-x-4">
 									<GlassSocialButton
 										icon={<GithubIcon className="w-6 h-6" />}
@@ -94,58 +90,6 @@ const ContactSection = () => {
 								</div>
 							</GlassCard>
 						</div>
-
-						<GlassCard className="p-5">
-							<div className="space-y-5">
-								<div>
-									<label className="block text-blue-300 mb-2 text-sm font-medium">Name</label>
-									<input
-										type="text"
-										name="name"
-										value={contactForm.name}
-										onChange={handleContactChange}
-										className="w-full bg-white/10 border border-black/20 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-400 text-black placeholder-gray-400"
-										placeholder="Your name"
-									/>
-								</div>
-
-								<div>
-									<label className="block text-blue-300 mb-2 text-sm font-medium">Email</label>
-									<input
-										type="email"
-										name="email"
-										value={contactForm.email}
-										onChange={handleContactChange}
-										className="w-full bg-white/10 border border-black/20 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-400 text-black placeholder-gray-400"
-										placeholder="Your email"
-									/>
-								</div>
-
-								<div>
-									<label className="block text-blue-300 mb-2 text-sm font-medium">Message</label>
-									<textarea
-										name="message"
-										value={contactForm.message}
-										onChange={handleContactChange}
-										className="w-full bg-white/10 border border-black/20 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-400 text-black placeholder-gray-400 min-h-[180px] resize-none"
-										placeholder="Your message"
-									></textarea>
-								</div>
-
-								<button
-									type="button"
-									onClick={handleContactSubmit}
-									className="w-full px-5 py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg hover:shadow-lg transition-all text-white font-medium flex items-center justify-center shadow-md hover:from-blue-600 hover:to-purple-700 transform hover:-translate-y-1"
-								>
-									Send Message
-									<SendIcon className="w-4 h-4 ml-2" />
-								</button>
-
-								<div className="text-gray-400 text-sm text-center mt-4">
-									I'll get back to you as soon as possible!
-								</div>
-							</div>
-						</GlassCard>
 					</div>
 				</div>
 			</div>

@@ -155,26 +155,26 @@ ${studentInfo.program}`;
 	return (
 		<div className={containerClasses}>
 			<div className="p-2 border-b border-white/10 bg-blue-500/10 shrink-0">
-				<h1 className="text-xl font-bold text-center text-black">MENTOR - Messaging ENvironment for Teacher Outreach & Recruitment</h1>
+				<h1 className="text-xl font-bold text-center text-white">MENTOR - Messaging ENvironment for Teacher Outreach & Recruitment</h1>
 			</div>
 
 			<div className="p-2 overflow-y-auto flex-grow glass-scrollbar">
 				{/* Tabs for organizing content in a smaller space */}
 				<div className="flex space-x-1 mb-3">
 					<button
-						className={`px-2 py-1 text-sm rounded-t ${selectedTab === 'info' ? 'bg-blue-100/50 font-medium' : 'bg-white/10'}`}
+						className={`px-2 py-1 text-white text-sm rounded-t ${selectedTab === 'info' ? 'bg-sky-700 bg-opacity-50 font-medium' : 'bg-white/10'}`}
 						onClick={() => setSelectedTab('info')}
 					>
 						Your Info
 					</button>
 					<button
-						className={`px-2 py-1 text-sm rounded-t ${selectedTab === 'search' ? 'bg-blue-100/50 font-medium' : 'bg-white/10'}`}
+						className={`px-2 py-1 text-white text-sm rounded-t ${selectedTab === 'search' ? 'bg-sky-700 bg-opacity-50 font-medium' : 'bg-white/10'}`}
 						onClick={() => setSelectedTab('search')}
 					>
 						Find Professor
 					</button>
 					<button
-						className={`px-2 py-1 text-sm rounded-t ${selectedTab === 'tips' ? 'bg-blue-100/50 font-medium' : 'bg-white/10'}`}
+						className={`px-2 py-1 text-white text-sm rounded-t ${selectedTab === 'tips' ? 'bg-sky-700 bg-opacity-50 font-medium' : 'bg-white/10'}`}
 						onClick={() => setSelectedTab('tips')}
 					>
 						Tips
@@ -183,11 +183,11 @@ ${studentInfo.program}`;
 
 				{/* Student Information Section */}
 				{selectedTab === 'info' && (
-					<div className="p-3 rounded-lg bg-white/10 backdrop-blur-md">
-						<h2 className="text-lg font-semibold mb-2 text-black">Your Information</h2>
+					<div className="p-3 rounded-lg bg-transparent backdrop-blur-md">
+						<h2 className="text-lg font-semibold mb-2 text-white">Your Information</h2>
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-2">
 							<div>
-								<label className="block text-xs font-medium text-gray-700 mb-1">Full Name</label>
+								<label className="block text-xs font-medium text-gray-300 mb-1">Full Name</label>
 								<input
 									type="text"
 									name="name"
@@ -197,7 +197,7 @@ ${studentInfo.program}`;
 								/>
 							</div>
 							<div>
-								<label className="block text-xs font-medium text-gray-700 mb-1">Student ID</label>
+								<label className="block text-xs font-medium text-gray-300 mb-1">Student ID</label>
 								<input
 									type="text"
 									name="id"
@@ -207,7 +207,7 @@ ${studentInfo.program}`;
 								/>
 							</div>
 							<div>
-								<label className="block text-xs font-medium text-gray-700 mb-1">Program/Major</label>
+								<label className="block text-xs font-medium text-gray-300 mb-1">Program/Major</label>
 								<input
 									type="text"
 									name="program"
@@ -217,7 +217,7 @@ ${studentInfo.program}`;
 								/>
 							</div>
 							<div className="md:col-span-2">
-								<label className="block text-xs font-medium text-gray-700 mb-1">Project Focus</label>
+								<label className="block text-xs font-medium text-gray-300 mb-1">Project Focus</label>
 								<textarea
 									name="projectFocus"
 									value={studentInfo.projectFocus}
@@ -227,7 +227,7 @@ ${studentInfo.program}`;
 								/>
 							</div>
 							<div>
-								<label className="block text-xs font-medium text-gray-700 mb-1">Background</label>
+								<label className="block text-xs font-medium text-gray-300 mb-1">Background</label>
 								<input
 									type="text"
 									name="background"
@@ -237,7 +237,7 @@ ${studentInfo.program}`;
 								/>
 							</div>
 							<div>
-								<label className="block text-xs font-medium text-gray-700 mb-1">Skills</label>
+								<label className="block text-xs font-medium text-gray-300 mb-1">Skills</label>
 								<input
 									type="text"
 									name="skills"
@@ -247,7 +247,7 @@ ${studentInfo.program}`;
 								/>
 							</div>
 							<div>
-								<label className="block text-xs font-medium text-gray-700 mb-1">Achievements</label>
+								<label className="block text-xs font-medium text-gray-300 mb-1">Achievements</label>
 								<textarea
 									name="achievements"
 									value={studentInfo.achievements}
@@ -257,7 +257,7 @@ ${studentInfo.program}`;
 								/>
 							</div>
 							<div>
-								<label className="block text-xs font-medium text-gray-700 mb-1">Experience</label>
+								<label className="block text-xs font-medium text-gray-300 mb-1">Experience</label>
 								<textarea
 									name="experience"
 									value={studentInfo.experience}
@@ -320,7 +320,7 @@ ${studentInfo.program}`;
 
 						{/* Common Research Areas */}
 						<div className="mb-2">
-							<label className="block text-xs font-medium text-gray-700 mb-1">Common Research:</label>
+							<label className="block text-xs font-medium text-gray-300 mb-1">Common Research:</label>
 							<div className="flex flex-wrap gap-1">
 								{commonResearchAreas.slice(0, 8).map((area, index) => (
 									<button
@@ -353,7 +353,7 @@ ${studentInfo.program}`;
 							</div>
 
 							<div className="flex items-center">
-								<span className="mr-2 text-xs text-gray-600">
+								<span className="mr-2 text-xs text-gray-300">
 									{filteredProfessors.length} found
 								</span>
 								<button
@@ -372,9 +372,9 @@ ${studentInfo.program}`;
 									{filteredProfessors.map((professor) => (
 										<div
 											key={professor.name + professor.email}
-											className={`p-2 rounded-lg cursor-pointer transition-all bg-white/10 backdrop-blur-sm ${selectedProfessor?.name === professor.name
+											className={`p-2 rounded-lg cursor-pointer transition-all bg-white backdrop-blur-sm ${selectedProfessor?.name === professor.name
 												? 'bg-blue-100/50 border-blue-500 shadow-md'
-												: 'hover:bg-white/20 border-white/20 hover:shadow'
+												: 'hover:bg-blue-100/50 border-white/20 hover:shadow'
 												}`}
 											onClick={() => setSelectedProfessor(professor)}
 										>
@@ -453,7 +453,7 @@ ${studentInfo.program}`;
 
 				{/* Tips Section */}
 				{selectedTab === 'tips' && (
-					<div className="p-3 bg-yellow-50/50 backdrop-blur-md border border-yellow-200/50 rounded-lg">
+					<div className="p-3 bg-white backdrop-blur-md border border-yellow-200/50 rounded-lg">
 						<h3 className="font-semibold text-yellow-800 mb-1 text-sm">Tips for Outreach:</h3>
 						<ul className="space-y-1 text-xs text-yellow-800">
 							<li className="flex">

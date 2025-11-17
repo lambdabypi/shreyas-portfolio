@@ -16,11 +16,11 @@ const ExperienceItem = ({ experience, index }) => {
 			<div className={`ml-6 md:w-1/2 ${isEvenIndex ? 'md:ml-0 md:mr-auto md:pr-8' : 'md:ml-auto md:pl-8'}`}>
 				<GlassCard className="p-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
 					<div className="text-blue-400 mb-1">{experience.period}</div>
-					<h3 className="text-xl font-bold mb-1 text-black">{experience.title}</h3>
-					<div className="text-black-300 mb-1">{experience.company}</div>
+					<h3 className="text-xl font-bold mb-1 text-white">{experience.title}</h3>
+					<div className="text-white text-opacity-60 font-bold mb-1">{experience.company}</div>
 					<div className="text-gray-400 mb-3 text-sm">{experience.location}</div>
 
-					<ul className="text-black-200 mb-4 list-disc pl-5 space-y-2">
+					<ul className="text-white mb-4 list-disc pl-5 space-y-2">
 						{experience.description.map((item, i) => (
 							<li key={i}>{item}</li>
 						))}
@@ -32,7 +32,7 @@ const ExperienceItem = ({ experience, index }) => {
 								key={skillIdx}
 								text={skill}
 								bgColorClass="bg-blue-500/20"
-								textColorClass="text-black-200"
+								textColorClass="text-black"
 							/>
 						))}
 					</div>
@@ -47,7 +47,7 @@ const EducationItem = ({ edu }) => {
 		<GlassCard className="p-4 hover:shadow-xl transition-all duration-300">
 			<div className="flex flex-col md:flex-row md:justify-between md:items-start">
 				<div>
-					<h4 className="text-xl font-bold text-black">{edu.degree}</h4>
+					<h4 className="text-xl font-bold text-white">{edu.degree}</h4>
 					<div className="text-blue-300">{edu.institution}</div>
 					<div className="text-gray-400 text-sm">{edu.location}</div>
 				</div>
@@ -55,14 +55,14 @@ const EducationItem = ({ edu }) => {
 			</div>
 
 			<div className="mt-4">
-				<div className="font-medium text-black-200">Relevant Courses:</div>
+				<div className="font-medium text-white text-opacity-50">Relevant Courses:</div>
 				<div className="flex flex-wrap gap-2 mt-2">
 					{edu.courses.map((course, i) => (
 						<GlassBadge
 							key={i}
 							text={course}
 							bgColorClass="bg-white/10"
-							textColorClass="text-black-200"
+							textColorClass="text-black"
 						/>
 					))}
 				</div>
@@ -76,7 +76,7 @@ const ExperienceSection = () => {
 
 	return (
 		<div className={`transition-opacity duration-800 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
-			<div className="w-full max-w-4xl bg-white/20 backdrop-blur-lg rounded-lg shadow-lg flex flex-col border border-white/30">
+			<div className="w-full max-w-4xl bg-transparent backdrop-blur-lg rounded-lg shadow-lg flex flex-col border border-white/30">
 				{/* Fixed header */}
 				<div className="p-6 border-b border-white/30 sticky top-0 z-10">
 					<div className="rounded-lg p-2">
@@ -115,7 +115,7 @@ const ExperienceSection = () => {
 							onClick={() => window.open('/assets/resume/Shreyas_Sreenivas_Resume.pdf', '_blank')}
 							className="inline-block"
 							bgClass="from-blue-400/50 to-purple-500/50"
-							textColorClass="text-black"
+							textColorClass="text-white"
 						/>
 					</div>
 				</div>
