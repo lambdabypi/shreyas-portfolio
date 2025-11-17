@@ -130,7 +130,7 @@ const InteractiveBackground = () => {
 		};
 	}, []);
 
-	// Main animation and canvas setup effect
+	// Main animation and canvas setup effect - removed gameData.unlockedConstellations from dependency
 	useEffect(() => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
@@ -166,15 +166,27 @@ const InteractiveBackground = () => {
 				});
 			}
 
-			// Restore constellation particles immediately
-			restoreConstellations();
+			// Don't restore constellations here - let the separate effect handle it
 		};
 
-		// Function to restore constellation state
+		// Function to restore constellation state (will be called from separate effect)
 		const restoreConstellations = () => {
 			if (!canvas) return;
 
-			gameData.unlockedConstellations.forEach(constId => {
+			// Get current game data from localStorage directly to avoid dependency issues
+			const savedData = localStorage.getItem('portfolioClickerData');
+			let currentUnlocked = new Set();
+
+			if (savedData) {
+				try {
+					const parsed = JSON.parse(savedData);
+					currentUnlocked = new Set(parsed.unlockedConstellations || []);
+				} catch (error) {
+					console.error('Failed to parse game data:', error);
+				}
+			}
+
+			currentUnlocked.forEach(constId => {
 				const constellation = constellations.find(c => c.id === constId);
 				if (!constellation) return;
 
@@ -204,11 +216,10 @@ const InteractiveBackground = () => {
 			});
 		};
 
-		// Animation loop
+		// Animation loop - now stable and not dependent on external state
 		const animate = () => {
-			// Keep original white background with subtle transparency
-			ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			// Clear canvas completely for clean rendering
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 			// Update particles
 			particles.current.forEach(particle => {
@@ -276,8 +287,20 @@ const InteractiveBackground = () => {
 				}
 			});
 
-			// Draw constellation connections with enhanced effects
-			gameData.unlockedConstellations.forEach(constId => {
+			// Draw constellation connections - get current state directly from localStorage
+			const savedData = localStorage.getItem('portfolioClickerData');
+			let currentUnlocked = new Set();
+
+			if (savedData) {
+				try {
+					const parsed = JSON.parse(savedData);
+					currentUnlocked = new Set(parsed.unlockedConstellations || []);
+				} catch (error) {
+					// Silently continue if parsing fails
+				}
+			}
+
+			currentUnlocked.forEach(constId => {
 				const constellation = constellations.find(c => c.id === constId);
 				if (!constellation) return;
 
@@ -349,6 +372,7 @@ const InteractiveBackground = () => {
 			canvas.width = dimensions.width;
 			canvas.height = dimensions.height;
 			initParticles();
+			restoreConstellations(); // Initial restore
 			animate();
 		}
 
@@ -356,7 +380,7 @@ const InteractiveBackground = () => {
 			window.removeEventListener('resize', handleResize);
 			cancelAnimationFrame(animationFrameId.current);
 		};
-	}, [dimensions, mousePosition, gameData.unlockedConstellations, constellations]);
+	}, [dimensions, mousePosition, constellations]); // Removed gameData.unlockedConstellations dependency
 
 	// Separate effect to handle constellation restoration when data changes
 	useEffect(() => {
