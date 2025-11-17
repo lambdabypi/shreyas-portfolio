@@ -112,7 +112,7 @@ const ExperienceSection = () => {
 						<GlassButton
 							label="Download Resume"
 							icon={<DownloadIcon className="w-4 h-4" />}
-							onClick={() => window.open('#resume', '_blank')}
+							onClick={() => window.open('/assets/resume/Shreyas_Sreenivas_Resume.pdf', '_blank')}
 							className="inline-block"
 							bgClass="from-blue-400/50 to-purple-500/50"
 							textColorClass="text-black"

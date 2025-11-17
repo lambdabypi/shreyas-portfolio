@@ -1,4 +1,4 @@
-// src/components/InteractivePortfolio.js
+// src/InteractivePortfolio.js
 import { useEffect } from 'react';
 import { PortfolioProvider, usePortfolio } from './context/PortfolioContext';
 
@@ -17,6 +17,9 @@ import ContactSection from './components/sections/ContactSection';
 
 // Chat components
 import { ChatButton, ChatAssistant } from './components/chat/ChatComponents';
+
+// Constellation Clicker Overlay
+import ConstellationClickerOverlay from './components/ConstellationClickerOverlay';
 
 // Main portfolio content
 const PortfolioContent = () => {
@@ -61,6 +64,9 @@ const PortfolioContent = () => {
 		<div className="relative min-h-screen overflow-hidden font-sans text-gray-800">
 			{/* Interactive Background */}
 			<InteractiveBackground />
+
+			{/* Constellation Clicker Overlay */}
+			<ConstellationClickerOverlay />
 
 			{/* Container */}
 			<div className="relative z-10 flex flex-col items-center justify-center min-h-screen">
