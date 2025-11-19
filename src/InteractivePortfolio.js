@@ -10,7 +10,7 @@ import { GlassNavigation } from './components/layout/GlassNavigation';
 import IntroSection from './components/sections/IntroSection';
 import ProjectsSection from './components/sections/ProjectsSection';
 import VRProjectsSection from './components/sections/VRProjectsSection';
-import InterestsSection from './components/sections/InterestsSection'; // Import the new section
+import InterestsSection from './components/sections/InterestsSection';
 import SkillsSection from './components/sections/SkillsSection';
 import ExperienceSection from './components/sections/ExperienceSection';
 import ContactSection from './components/sections/ContactSection';
