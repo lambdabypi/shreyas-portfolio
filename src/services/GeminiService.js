@@ -6,7 +6,8 @@ class GeminiService {
 		this.navigationPatterns = {
 			map: ['map', 'world', 'journey', 'timeline', 'path'],
 			skills: ['skill', 'ability', 'expertise', 'knowledge', 'proficiency', 'tech'],
-			projects: ['project', 'work', 'portfolio', 'showcase', 'creation', 'built'],
+			projects: ['project', 'work', 'portfolio', 'showcase', 'creation', 'built', 'web project', 'regular project'],
+			'vr-projects': ['vr', 'virtual reality', 'vr project', 'virtual', 'reality', 'immersive', '3d', 'headset', 'vr work'],
 			experience: ['experience', 'job', 'career', 'position', 'role', 'employment', 'company', 'workplace']
 		};
 
@@ -137,12 +138,19 @@ class GeminiService {
 		const hasNavigationTrigger = this.containsAny(lowerMsg, navigationTriggers);
 
 		if (hasNavigationTrigger) {
-			// Check each section's patterns
-			for (const [section, patterns] of Object.entries(this.navigationPatterns)) {
-				if (this.containsAny(lowerMsg, patterns)) {
-					targetSection = section;
-					shouldNavigate = true;
-					break;
+			// Check for VR-specific keywords first (more specific)
+			if (this.containsAny(lowerMsg, this.navigationPatterns['vr-projects'])) {
+				targetSection = 'vr-projects';
+				shouldNavigate = true;
+			}
+			// Then check other sections
+			else {
+				for (const [section, patterns] of Object.entries(this.navigationPatterns)) {
+					if (section !== 'vr-projects' && this.containsAny(lowerMsg, patterns)) {
+						targetSection = section;
+						shouldNavigate = true;
+						break;
+					}
 				}
 			}
 		}
@@ -187,14 +195,20 @@ class GeminiService {
 			} else if (targetSection === 'skills') {
 				return "Let's check out Shreyas's Skills Tree! He excels in Python (95%), Machine Learning (90%), and Data Engineering (90%). The visualization shows how his skills interconnect.";
 			} else if (targetSection === 'projects') {
-				return "I'll show you Shreyas's impressive projects. His portfolio includes a Medical Multi-Agent Framework, a Multimodal Video Ad Classifier, and an ML-based Glioma Classification system. Feel free to ask about any specific project!";
+				return "I'll show you Shreyas's web development projects! His portfolio includes a Medical Multi-Agent Framework, a Multimodal Video Ad Classifier, and an ML-based Glioma Classification system. Feel free to ask about any specific project!";
+			} else if (targetSection === 'vr-projects') {
+				return "Let me show you Shreyas's VR projects! He's created immersive virtual reality experiences and 3D applications. You'll be able to explore his VR portfolio and see his work in virtual environments!";
 			} else if (targetSection === 'experience') {
 				return "Let's explore Shreyas's professional experience! He's currently a Data Engineer & AI Developer at Intelligent DataWorks and a Co-Founder at Clau API. He previously worked as an AI Engineer at Chipmonk Technologies.";
 			}
 		}
 
 		// Handle specific query types
-		if (this.containsAny(lowerMsg, ['project', 'work', 'portfolio', 'build'])) {
+		if (this.containsAny(lowerMsg, ['vr', 'virtual reality', 'immersive', '3d', 'headset'])) {
+			return "Shreyas has worked on several VR and immersive technology projects! His VR portfolio showcases his expertise in creating virtual reality experiences and 3D applications. Would you like me to show you the VR Projects section?";
+		}
+
+		if (this.containsAny(lowerMsg, ['project', 'work', 'portfolio', 'build']) && !this.containsAny(lowerMsg, ['vr', 'virtual reality', 'immersive', '3d'])) {
 			return "Shreyas has worked on several impressive projects. His Medical Multi-Agent Framework integrates LLMs with critique mechanisms and achieved 92% alignment with healthcare expertise requirements. His Multimodal Video Ad Classifier analyzes video content with 81.43% human-coder agreement. Would you like me to show you the Projects section?";
 		}
 
