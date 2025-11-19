@@ -27,12 +27,23 @@ class GeminiService {
 		const lowerMsg = testMessage.toLowerCase();
 		console.log(`📝 Lowercase message: "${lowerMsg}"`);
 
-		// Check for navigation triggers
+		// Check for explicit navigation triggers
 		const navigationTriggers = ['show', 'go to', 'navigate', 'take me', 'view', 'see', 'open', 'display', 'explore'];
 		const hasNavigationTrigger = this.containsAny(lowerMsg, navigationTriggers);
-		console.log(`🎯 Has navigation trigger: ${hasNavigationTrigger}`);
+		console.log(`🎯 Has explicit navigation trigger: ${hasNavigationTrigger}`);
 
-		if (hasNavigationTrigger) {
+		// Check for implicit navigation phrases
+		const implicitTriggers = [
+			'tell me about', 'what about', 'about his', 'about her', 'about their',
+			'his experience', 'her experience', 'their experience',
+			'his projects', 'her projects', 'their projects',
+			'his skills', 'her skills', 'their skills',
+			'his work', 'her work', 'their work'
+		];
+		const hasImplicitTrigger = this.containsAny(lowerMsg, implicitTriggers);
+		console.log(`🎯 Has implicit navigation trigger: ${hasImplicitTrigger}`);
+
+		if (hasNavigationTrigger || hasImplicitTrigger) {
 			// Check for VR-specific keywords first
 			if (this.containsAny(lowerMsg, this.navigationPatterns['vr-projects'])) {
 				console.log(`🔍 VR keywords detected:`, this.navigationPatterns['vr-projects']);
@@ -174,11 +185,21 @@ class GeminiService {
 		let targetSection = null;
 		let shouldNavigate = false;
 
-		// Check for navigation triggers
+		// Check for explicit navigation triggers
 		const navigationTriggers = ['show', 'go to', 'navigate', 'take me', 'view', 'see', 'open', 'display', 'explore'];
 		const hasNavigationTrigger = this.containsAny(lowerMsg, navigationTriggers);
 
-		if (hasNavigationTrigger) {
+		// Check for implicit navigation phrases
+		const implicitTriggers = [
+			'tell me about', 'what about', 'about his', 'about her', 'about their',
+			'his experience', 'her experience', 'their experience',
+			'his projects', 'her projects', 'their projects',
+			'his skills', 'her skills', 'their skills',
+			'his work', 'her work', 'their work'
+		];
+		const hasImplicitTrigger = this.containsAny(lowerMsg, implicitTriggers);
+
+		if (hasNavigationTrigger || hasImplicitTrigger) {
 			// Check for VR-specific keywords first (more specific)
 			if (this.containsAny(lowerMsg, this.navigationPatterns['vr-projects'])) {
 				targetSection = 'vr-projects';
