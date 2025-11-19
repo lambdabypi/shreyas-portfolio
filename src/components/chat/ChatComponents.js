@@ -232,7 +232,7 @@ export const ChatAssistant = () => {
 							return (
 								<div
 									key={messageKey}
-									className={`glass-message ${msg.sender} opacity-100 translate-y-0`}
+									className={`glass-message ${msg.sender} translate-y-0`}
 								>
 									<ChatBubble message={msg} formatTimestamp={formatTimestamp} />
 								</div>
