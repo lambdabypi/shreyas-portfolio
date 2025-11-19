@@ -47,20 +47,28 @@ export const PortfolioProvider = ({ children }) => {
 	const userScrolledRef = useRef(false);
 	const mousePosition = useRef({ x: 0, y: 0 });
 
-	// Handle section changes with animation
+	// Handle section changes with animation - WITH DEBUG LOGGING
 	const changeSection = (section) => {
-		if (isAnimating || section === activeSection) return;
+		console.log(`🔄 changeSection called with: ${section} (current: ${activeSection})`);
 
+		if (isAnimating || section === activeSection) {
+			console.log(`⚠️ Navigation blocked - isAnimating: ${isAnimating}, same section: ${section === activeSection}`);
+			return;
+		}
+
+		console.log(`✅ Starting navigation to: ${section}`);
 		setIsAnimating(true);
 		setTimeout(() => {
+			console.log(`🎯 Setting active section to: ${section}`);
 			setActiveSection(section);
 			setSelectedProject(null); // Clear selected project
 			setSelectedVRProject(null); // Clear selected VR project
 			setIsAnimating(false);
+			console.log(`✨ Navigation completed to: ${section}`);
 		}, 800);
 	};
 
-	// Handle chat messages
+	// Handle chat messages - WITH DEBUG LOGGING
 	const handleSendMessage = async () => {
 		if (!userMessage.trim() || isProcessing) return;
 
@@ -84,12 +92,29 @@ export const PortfolioProvider = ({ children }) => {
 
 		try {
 			// Process message with GeminiService
+			console.log(`📤 Sending message to GeminiService: "${userMsg}"`);
 			const { response, shouldNavigate, targetSection } =
 				await geminiServiceInstance.generateResponse(userMsg);
 
+			// DEBUG: Log navigation details
+			console.log('🔍 Navigation Debug:', {
+				userMessage: userMsg,
+				shouldNavigate,
+				targetSection,
+				currentActiveSection: activeSection,
+				isAnimating,
+				isProcessing
+			});
+
 			// Handle navigation intents
 			if (shouldNavigate && targetSection) {
-				setTimeout(() => changeSection(targetSection), 500);
+				console.log(`🚀 Attempting to navigate to: ${targetSection} (after 500ms delay)`);
+				setTimeout(() => {
+					console.log(`🎯 Executing changeSection(${targetSection})`);
+					changeSection(targetSection);
+				}, 500);
+			} else {
+				console.log('❌ No navigation triggered:', { shouldNavigate, targetSection });
 			}
 
 			// Add bot response

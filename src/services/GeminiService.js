@@ -18,6 +18,45 @@ class GeminiService {
 	}
 
 	/**
+	 * Test function to debug navigation detection
+	 * @param {string} testMessage - Message to test
+	 */
+	testNavigationDetection(testMessage) {
+		console.log(`🧪 Testing navigation detection for: "${testMessage}"`);
+
+		const lowerMsg = testMessage.toLowerCase();
+		console.log(`📝 Lowercase message: "${lowerMsg}"`);
+
+		// Check for navigation triggers
+		const navigationTriggers = ['show', 'go to', 'navigate', 'take me', 'view', 'see', 'open', 'display', 'explore'];
+		const hasNavigationTrigger = this.containsAny(lowerMsg, navigationTriggers);
+		console.log(`🎯 Has navigation trigger: ${hasNavigationTrigger}`);
+
+		if (hasNavigationTrigger) {
+			// Check for VR-specific keywords first
+			if (this.containsAny(lowerMsg, this.navigationPatterns['vr-projects'])) {
+				console.log(`🔍 VR keywords detected:`, this.navigationPatterns['vr-projects']);
+				return { shouldNavigate: true, targetSection: 'vr-projects' };
+			}
+
+			// Check other sections
+			for (const [section, patterns] of Object.entries(this.navigationPatterns)) {
+				if (section !== 'vr-projects') {
+					const matches = this.containsAny(lowerMsg, patterns);
+					console.log(`🔍 Section ${section} patterns:`, patterns, `- Matches: ${matches}`);
+					if (matches) {
+						console.log(`✅ Navigation detected for section: ${section}`);
+						return { shouldNavigate: true, targetSection: section };
+					}
+				}
+			}
+		}
+
+		console.log(`❌ No navigation detected`);
+		return { shouldNavigate: false, targetSection: null };
+	}
+
+	/**
 	 * Add a message to the conversation history
 	 * @param {Object} message - Message object with sender and content
 	 */
@@ -41,7 +80,9 @@ class GeminiService {
 		this.addToHistory({ role: 'user', content: userMessage });
 
 		// Check for navigation intents (keep this feature from your original code)
+		console.log(`🔍 GeminiService: Detecting navigation intent for "${userMessage}"`);
 		const { shouldNavigate, targetSection } = this.detectNavigationIntent(userMessage);
+		console.log(`🔍 GeminiService: Navigation result:`, { shouldNavigate, targetSection });
 
 		try {
 			// Get the base URL - this is crucial for cross-origin requests
@@ -88,11 +129,11 @@ class GeminiService {
 			// Add response to history
 			this.addToHistory({ role: 'assistant', content: generatedText });
 
+			console.log(`✅ GeminiService: Returning API response with navigation:`, { shouldNavigate, targetSection });
 			return { response: generatedText, shouldNavigate, targetSection };
 		} catch (error) {
 			console.error('Error calling Gemini API:', error);
-			// Log detailed error info
-			console.error('Error details:', error);
+			console.log('🔄 GeminiService: Falling back to local response');
 
 			// Fallback to your existing method if API fails
 			return this.getFallbackResponse(userMessage);
@@ -174,9 +215,11 @@ class GeminiService {
 	 * @returns {Object} - Response and navigation intent
 	 */
 	getFallbackResponse(userMessage) {
+		console.log(`🔄 GeminiService: Using fallback response for "${userMessage}"`);
 		const { shouldNavigate, targetSection } = this.detectNavigationIntent(userMessage);
 		const response = this.getContextualResponse(userMessage);
 
+		console.log(`🔄 GeminiService: Fallback navigation result:`, { shouldNavigate, targetSection });
 		return { response, shouldNavigate, targetSection };
 	}
 
