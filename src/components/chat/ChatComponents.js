@@ -50,8 +50,9 @@ export const ChatButton = () => {
 	);
 };
 
-// FIXED Chat Message Bubble Component - REMOVED OUTER WRAPPER
+// SIMPLIFIED Chat Message Bubble Component - FIXED STRUCTURE
 export const ChatBubble = ({ message, formatTimestamp }) => {
+
 	return (
 		<div className={`glass-message-bubble ${message.sender} ${message.sender === 'bot' ? 'hover:shadow-lg' : 'hover:bg-blue-500/30'} transition-all duration-300`}>
 			{message.sender === 'bot' && (
@@ -59,7 +60,9 @@ export const ChatBubble = ({ message, formatTimestamp }) => {
 					<SparklesIcon className="h-3 w-3" />
 				</div>
 			)}
-			<div className="glass-message-text">{message.message}</div>
+			<div className="glass-message-text">
+				{message.message || '[Message content missing]'}
+			</div>
 
 			{message.timestamp && (
 				<div className="glass-message-time">
@@ -96,7 +99,7 @@ export const SuggestionButton = ({ text, onClick, disabled }) => {
 	);
 };
 
-// Chat Assistant Component
+// COMPLETELY REWRITTEN Chat Assistant Component
 export const ChatAssistant = () => {
 	const {
 		showAssistant,
@@ -119,9 +122,8 @@ export const ChatAssistant = () => {
 		clearChatHistory
 	} = usePortfolio();
 
-	// Animation states
+	// Simplified animation state
 	const [showingChat, setShowingChat] = useState(false);
-	const [visibleMessages, setVisibleMessages] = useState([]);
 
 	// Memoize the function to prevent recreation on each render
 	const handleSuggestion = useCallback((text) => {
@@ -132,51 +134,14 @@ export const ChatAssistant = () => {
 		}, 100);
 	}, [isProcessing, setUserMessage, handleSendMessage]);
 
-	// Staggered animation for messages
+	// SIMPLIFIED animation logic - no staggered effects
 	useEffect(() => {
 		if (showAssistant && !minimized) {
 			setShowingChat(true);
-			setVisibleMessages([]);
-
-			// Store the current length in a variable to use inside the effect
-			const messagesCount = chatMessages.length;
-
-			let count = 0;
-			const interval = setInterval(() => {
-				if (count < messagesCount) {
-					setVisibleMessages(prev => [...prev, count]);
-					count++;
-				} else {
-					clearInterval(interval);
-				}
-			}, 100);
-
-			return () => clearInterval(interval);
 		} else {
 			setShowingChat(false);
-			setVisibleMessages([]);
 		}
-	}, [showAssistant, minimized, chatMessages.length]);
-
-	// Only clear visible messages when the chat is fully hidden
-	useEffect(() => {
-		if (!showAssistant) {
-			const timer = setTimeout(() => {
-				setVisibleMessages([]);
-			}, 500); // Wait for hide animation to complete
-			return () => clearTimeout(timer);
-		}
-	}, [showAssistant]);
-
-	// Check if message should be animated
-	const isMessageVisible = useCallback((index) => {
-		return visibleMessages.includes(index);
-	}, [visibleMessages]);
-
-	// Get animation delay for each message
-	const getAnimationDelay = useCallback((index) => {
-		return `${50 * index}ms`;
-	}, []);
+	}, [showAssistant, minimized]);
 
 	if (!showAssistant) return null;
 
@@ -184,10 +149,13 @@ export const ChatAssistant = () => {
 		<>
 			{/* Full Chat Window */}
 			{!minimized && (
-				<div className="fixed bottom-24 right-6 z-30 w-96 h-[30rem] glass-chat rounded-xl shadow-2xl border border-white/20 flex flex-col overflow-hidden transition-all duration-500 transform origin-bottom-right" style={{
-					opacity: showingChat ? 1 : 0,
-					transform: showingChat ? 'scale(1)' : 'scale(0.9)'
-				}}>
+				<div
+					className="fixed bottom-24 right-6 z-30 w-96 h-[30rem] glass-chat rounded-xl shadow-2xl border border-white/20 flex flex-col overflow-hidden transition-all duration-500 transform origin-bottom-right"
+					style={{
+						opacity: showingChat ? 1 : 0,
+						transform: showingChat ? 'scale(1)' : 'scale(0.9)'
+					}}
+				>
 					{/* Chatbot Header */}
 					<div className="glass-chat-header">
 						<div className="flex items-center">
@@ -197,7 +165,7 @@ export const ChatAssistant = () => {
 							</div>
 							<div>
 								<div className="text-lg font-bold text-black">Fido</div>
-								<div className="text-xs text-grey-200">Portfolio Assistant</div>
+								<div className="text-xs text-gray">Portfolio Assistant</div>
 							</div>
 						</div>
 						<div className="flex space-x-2">
@@ -229,35 +197,34 @@ export const ChatAssistant = () => {
 					<div className="glass-chat-status">
 						<div className="flex items-center">
 							<div className="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse"></div>
-							<span className="text-sm text-black-300">Assistant Online</span>
+							<span className="text-sm text-black">Assistant Online</span>
 						</div>
 						{chatMessages.length > 1 && (
 							<span className="text-sm text-gray-400">{chatMessages.length} messages</span>
 						)}
 					</div>
 
-					{/* Messages area - FIXED NESTING STRUCTURE */}
+					{/* Messages area - COMPLETELY SIMPLIFIED */}
 					<div
 						className="glass-chat-messages custom-scrollbar"
 						ref={messagesContainerRef}
 						onScroll={handleScroll}
 					>
-						{/* Fixed rendering of messages - NO DOUBLE NESTING */}
-						{chatMessages.map((msg, idx) => (
-							<div
-								key={`msg-${idx}-${msg.id}`}
-								className={`glass-message ${msg.sender} ${isMessageVisible(idx) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-								style={{
-									transitionDelay: getAnimationDelay(idx),
-									transition: 'opacity 0.3s ease, transform 0.3s ease'
-								}}
-							>
-								{/* ChatBubble now only renders the bubble content, not the wrapper */}
-								<ChatBubble message={msg} formatTimestamp={formatTimestamp} />
-							</div>
-						))}
+						{chatMessages.map((msg, idx) => {
+							// Generate a more stable key
+							const messageKey = `${msg.sender}-${msg.id}-${idx}`;
 
-						{/* Typing indicator with enhanced animation */}
+							return (
+								<div
+									key={messageKey}
+									className={`glass-message ${msg.sender} translate-y-0`}
+								>
+									<ChatBubble message={msg} formatTimestamp={formatTimestamp} />
+								</div>
+							);
+						})}
+
+						{/* Typing indicator */}
 						{isTyping && (
 							<div className="glass-message bot opacity-100 translate-y-0">
 								<div className="glass-typing-indicator">
