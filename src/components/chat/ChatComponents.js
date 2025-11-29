@@ -12,7 +12,35 @@ import {
 	ArrowRightIcon
 } from '../icons';
 
-// Chat Button Component
+// Dog Avatar Component with different moods
+const DogAvatar = ({ mood = 'happy', size = 'w-10 h-10' }) => {
+	const getEyes = () => {
+		switch (mood) {
+			case 'excited': return '•ᴗ•';
+			case 'curious': return '•◡•';
+			case 'proud': return '^ᴗ^';
+			case 'playful': return '◕‿◕';
+			case 'sleepy': return '•‿•';
+			default: return '•‿•';
+		}
+	};
+
+	const getTailWag = () => {
+		return mood === 'excited' ? 'animate-bounce' : '';
+	};
+
+	return (
+		<div className={`${size} rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold relative overflow-hidden border-2 border-orange-300 ${getTailWag()}`}>
+			<div className="absolute inset-0 bg-gradient-to-t from-orange-600/20 to-transparent"></div>
+			<span className="relative text-xs">{getEyes()}</span>
+			{/* Dog ears */}
+			<div className="absolute -top-1 -left-1 w-3 h-3 bg-orange-600 rounded-full transform rotate-45"></div>
+			<div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-600 rounded-full transform rotate-45"></div>
+		</div>
+	);
+};
+
+// Chat Button Component - Updated with dog theme
 export const ChatButton = () => {
 	const { showAssistant, setShowAssistant } = usePortfolio();
 	const [pulsating, setPulsating] = useState(false);
@@ -23,7 +51,7 @@ export const ChatButton = () => {
 			const interval = setInterval(() => {
 				setPulsating(true);
 				setTimeout(() => setPulsating(false), 2000);
-			}, 10000);
+			}, 8000);
 
 			return () => clearInterval(interval);
 		}
@@ -31,18 +59,19 @@ export const ChatButton = () => {
 
 	return (
 		<button
-			className={`fixed bottom-6 right-6 z-30 w-14 h-14 flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform ${pulsating ? 'scale-110 animate-pulse' : 'hover:scale-110'} border border-white/30`}
+			className={`fixed bottom-6 right-6 z-30 w-14 h-14 flex items-center justify-center bg-gradient-to-r from-orange-400 to-amber-500 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform ${pulsating ? 'scale-110 animate-pulse' : 'hover:scale-110'
+				} border-2 border-orange-300`}
 			onClick={() => setShowAssistant(!showAssistant)}
 		>
 			<div className="absolute inset-0 rounded-full overflow-hidden">
-				<div className="absolute inset-0 bg-white/20 button-shine opacity-20"></div>
+				<div className="absolute inset-0 bg-white/20 opacity-20"></div>
 			</div>
 
 			{showAssistant ? (
 				<XIcon className="w-6 h-6 text-white relative z-10" />
 			) : (
 				<div className="relative z-10">
-					<ChatIcon className="w-6 h-6 text-white" />
+					<span className="text-2xl">🐕</span>
 					<span className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></span>
 				</div>
 			)}
@@ -50,30 +79,60 @@ export const ChatButton = () => {
 	);
 };
 
-// SIMPLIFIED Chat Message Bubble Component - FIXED STRUCTURE
+// Dog-themed Chat Bubble Component
 export const ChatBubble = ({ message, formatTimestamp }) => {
+	const getDogMood = () => {
+		// Extract mood from message or determine based on content
+		if (message.mood) return message.mood;
+
+		const msgText = (message.message || '').toLowerCase();
+		if (msgText.includes('excited') || msgText.includes('woof') || msgText.includes('*tail wagging*')) return 'excited';
+		if (msgText.includes('curious') || msgText.includes('*tilts head*') || msgText.includes('sniff')) return 'curious';
+		if (msgText.includes('proud') || msgText.includes('good boy') || msgText.includes('amazing')) return 'proud';
+		if (msgText.includes('playful') || msgText.includes('*spins*') || msgText.includes('*runs*')) return 'playful';
+
+		return 'happy';
+	};
 
 	return (
-		<div className={`glass-message-bubble ${message.sender} ${message.sender === 'bot' ? 'hover:shadow-lg' : 'hover:bg-blue-500/30'} transition-all duration-300`}>
+		<div className={`flex items-start space-x-3 mb-4 ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
 			{message.sender === 'bot' && (
-				<div className="glass-bot-icon">
-					<SparklesIcon className="h-3 w-3" />
-				</div>
+				<DogAvatar mood={getDogMood()} />
 			)}
-			<div className="glass-message-text">
-				{message.message || '[Message content missing]'}
+
+			<div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-lg relative ${message.sender === 'user'
+					? 'bg-blue-500 text-white ml-auto rounded-br-sm'
+					: 'bg-white text-gray-800 rounded-bl-sm border-2 border-orange-200'
+				}`}>
+				{/* Speech bubble tail */}
+				<div className={`absolute top-4 ${message.sender === 'user'
+						? 'right-0 translate-x-full'
+						: 'left-0 -translate-x-full'
+					} w-0 h-0 border-8 border-transparent ${message.sender === 'user' ? 'border-l-blue-500' : 'border-r-white'
+					}`}></div>
+
+				<div className="text-sm leading-relaxed">
+					{message.message || '[Message content missing]'}
+				</div>
+
+				{message.timestamp && (
+					<div className={`text-xs mt-2 ${message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
+						}`}>
+						{formatTimestamp(message.timestamp)}
+					</div>
+				)}
 			</div>
 
-			{message.timestamp && (
-				<div className="glass-message-time">
-					{formatTimestamp(message.timestamp)}
+			{message.sender === 'user' && (
+				<div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold">
+					<span className="text-xs">👤</span>
 				</div>
 			)}
 		</div>
 	);
 };
 
-// Suggestion Button Component
+// Dog-themed Suggestion Button Component
 export const SuggestionButton = ({ text, onClick, disabled }) => {
 	const [isHovered, setIsHovered] = useState(false);
 
@@ -82,24 +141,42 @@ export const SuggestionButton = ({ text, onClick, disabled }) => {
 			onClick={onClick}
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => setIsHovered(false)}
-			className={`glass-suggestion-btn relative overflow-hidden group ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md'}`}
+			className={`px-3 py-2 bg-gradient-to-r from-orange-200 to-amber-200 rounded-full text-sm text-orange-800 font-medium border border-orange-300 transition-all duration-200 relative overflow-hidden ${disabled
+					? 'opacity-50 cursor-not-allowed'
+					: 'hover:shadow-md hover:from-orange-300 hover:to-amber-300 transform hover:-translate-y-0.5'
+				}`}
 			disabled={disabled}
 		>
-			{/* Button shine effect */}
-			<span
-				className={`absolute inset-0 opacity-0 transition-opacity duration-300 suggestion-shine ${isHovered && !disabled ? 'opacity-100' : ''}`}
-			/>
-
-			{/* Text with arrow icon */}
 			<span className="relative z-10 flex items-center">
-				{text}
-				<ArrowRightIcon className={`w-3 h-3 ml-1 opacity-0 transition-all duration-300 ${isHovered && !disabled ? 'opacity-100 translate-x-1' : '-translate-x-1'}`} />
+				🐾 {text}
+				<ArrowRightIcon className={`w-3 h-3 ml-1 transition-all duration-300 ${isHovered && !disabled ? 'opacity-100 translate-x-1' : 'opacity-0 -translate-x-1'
+					}`} />
 			</span>
 		</button>
 	);
 };
 
-// COMPLETELY REWRITTEN Chat Assistant Component
+// Dog Typing Indicator Component
+const DogTypingIndicator = () => {
+	return (
+		<div className="flex items-start space-x-3 mb-4">
+			<DogAvatar mood="curious" />
+			<div className="bg-white px-4 py-3 rounded-2xl rounded-bl-sm border-2 border-orange-200 shadow-lg">
+				<div className="flex items-center space-x-1">
+					<span className="text-sm text-gray-600">Fido is thinking</span>
+					<div className="flex space-x-1">
+						<div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+						<div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+						<div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+					</div>
+					<span className="text-lg">🐕</span>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+// Main Dog Chat Assistant Component
 export const ChatAssistant = () => {
 	const {
 		showAssistant,
@@ -122,7 +199,6 @@ export const ChatAssistant = () => {
 		clearChatHistory
 	} = usePortfolio();
 
-	// Simplified animation state
 	const [showingChat, setShowingChat] = useState(false);
 
 	// Memoize the function to prevent recreation on each render
@@ -134,7 +210,7 @@ export const ChatAssistant = () => {
 		}, 100);
 	}, [isProcessing, setUserMessage, handleSendMessage]);
 
-	// SIMPLIFIED animation logic - no staggered effects
+	// Animation logic
 	useEffect(() => {
 		if (showAssistant && !minimized) {
 			setShowingChat(true);
@@ -150,124 +226,120 @@ export const ChatAssistant = () => {
 			{/* Full Chat Window */}
 			{!minimized && (
 				<div
-					className="fixed bottom-24 right-6 z-30 w-96 h-[30rem] glass-chat rounded-xl shadow-2xl border border-white/20 flex flex-col overflow-hidden transition-all duration-500 transform origin-bottom-right"
+					className="fixed bottom-24 right-6 z-30 w-96 h-[32rem] bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl shadow-2xl border-2 border-orange-200 flex flex-col overflow-hidden transition-all duration-500 transform origin-bottom-right"
 					style={{
 						opacity: showingChat ? 1 : 0,
 						transform: showingChat ? 'scale(1)' : 'scale(0.9)'
 					}}
 				>
-					{/* Chatbot Header */}
-					<div className="glass-chat-header">
-						<div className="flex items-center">
-							<div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mr-3 relative overflow-hidden">
-								<div className="absolute inset-0 button-shine"></div>
-								<SparklesIcon className="h-5 w-5 text-white relative z-10" />
+					{/* Dog Chat Header */}
+					<div className="bg-gradient-to-r from-orange-400 to-amber-500 p-4 border-b-2 border-orange-300">
+						<div className="flex items-center justify-between">
+							<div className="flex items-center">
+								<DogAvatar size="w-12 h-12" mood="happy" />
+								<div className="ml-3">
+									<div className="text-lg font-bold text-white flex items-center">
+										Fido 🐕
+									</div>
+									<div className="text-xs text-orange-100">Your Pawsome Portfolio Assistant</div>
+								</div>
 							</div>
-							<div>
-								<div className="text-lg font-bold text-black">Fido</div>
-								<div className="text-xs text-gray">Portfolio Assistant</div>
+							<div className="flex space-x-2">
+								<button
+									className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
+									onClick={clearChatHistory}
+									title="Clear chat history"
+								>
+									<TrashIcon className="h-4 w-4" />
+								</button>
+								<button
+									className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
+									onClick={() => setMinimized(true)}
+									title="Minimize"
+								>
+									<MinusIcon className="h-4 w-4" />
+								</button>
+								<button
+									className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
+									onClick={() => setShowAssistant(false)}
+									title="Close"
+								>
+									<XIcon className="h-4 w-4" />
+								</button>
 							</div>
-						</div>
-						<div className="flex space-x-2">
-							<button
-								className="glass-chat-btn hover:bg-red-500/30 transition-colors group"
-								onClick={clearChatHistory}
-								title="Clear chat history"
-							>
-								<TrashIcon className="h-4 w-4 group-hover:scale-110 transition-transform" />
-							</button>
-							<button
-								className="glass-chat-btn hover:bg-blue-500/30 transition-colors group"
-								onClick={() => setMinimized(true)}
-								title="Minimize"
-							>
-								<MinusIcon className="h-4 w-4 group-hover:scale-110 transition-transform" />
-							</button>
-							<button
-								className="glass-chat-btn hover:bg-purple-500/30 transition-colors group"
-								onClick={() => setShowAssistant(false)}
-								title="Close"
-							>
-								<XIcon className="h-4 w-4 group-hover:scale-110 transition-transform" />
-							</button>
 						</div>
 					</div>
 
 					{/* Status bar */}
-					<div className="glass-chat-status">
-						<div className="flex items-center">
-							<div className="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse"></div>
-							<span className="text-sm text-black">Assistant Online</span>
+					<div className="bg-orange-100/50 px-4 py-2 border-b border-orange-200">
+						<div className="flex items-center justify-between">
+							<div className="flex items-center">
+								<div className="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse"></div>
+								<span className="text-sm text-orange-800">Fido is online and ready to help! 🦴</span>
+							</div>
+							{chatMessages.length > 1 && (
+								<span className="text-sm text-orange-600">{chatMessages.length} messages</span>
+							)}
 						</div>
-						{chatMessages.length > 1 && (
-							<span className="text-sm text-gray-400">{chatMessages.length} messages</span>
-						)}
 					</div>
 
-					{/* Messages area - COMPLETELY SIMPLIFIED */}
+					{/* Messages area */}
 					<div
-						className="glass-chat-messages custom-scrollbar"
+						className="flex-1 overflow-y-auto p-4 space-y-4"
 						ref={messagesContainerRef}
 						onScroll={handleScroll}
+						style={{
+							scrollbarWidth: 'thin',
+							scrollbarColor: '#fb923c #fed7aa'
+						}}
 					>
 						{chatMessages.map((msg, idx) => {
-							// Generate a more stable key
 							const messageKey = `${msg.sender}-${msg.id}-${idx}`;
-
 							return (
-								<div
-									key={messageKey}
-									className={`glass-message ${msg.sender} translate-y-0`}
-								>
-									<ChatBubble message={msg} formatTimestamp={formatTimestamp} />
-								</div>
+								<ChatBubble key={messageKey} message={msg} formatTimestamp={formatTimestamp} />
 							);
 						})}
 
 						{/* Typing indicator */}
-						{isTyping && (
-							<div className="glass-message bot opacity-100 translate-y-0">
-								<div className="glass-typing-indicator">
-									<div className="typing-dot" style={{ animationDelay: '0ms' }}></div>
-									<div className="typing-dot" style={{ animationDelay: '300ms' }}></div>
-									<div className="typing-dot" style={{ animationDelay: '600ms' }}></div>
-								</div>
-							</div>
-						)}
+						{isTyping && <DogTypingIndicator />}
 
 						<div ref={messagesEndRef} />
 					</div>
 
-					{/* New message indicator when scrolled up */}
+					{/* New message indicator */}
 					{showNewMessageIndicator && (
 						<button
-							className="glass-new-message-btn animate-bounce"
+							className="absolute right-8 bottom-32 bg-orange-400 text-white px-3 py-1 rounded-full text-sm shadow-lg animate-bounce flex items-center"
 							onClick={scrollToBottom}
 						>
 							<ChevronDownIcon className="h-3 w-3 mr-1" />
-							New messages
+							Woof! New message!
 						</button>
 					)}
 
 					{/* Input area */}
-					<div className="glass-chat-input-container">
-						<div className="glass-chat-input-wrapper group focus-within:shadow-lg transition-shadow">
+					<div className="bg-white border-t-2 border-orange-200 p-4">
+						{/* Input field */}
+						<div className="relative mb-3">
 							<input
 								type="text"
 								value={userMessage}
 								onChange={(e) => setUserMessage(e.target.value)}
 								onKeyPress={handleKeyPress}
-								className="glass-chat-input placeholder:text-gray-400/70 focus:placeholder:text-gray-400/50 transition-all"
-								placeholder="Ask about Shreyas or navigate..."
+								className="w-full pl-4 pr-12 py-3 bg-orange-50 border-2 border-orange-200 rounded-full focus:outline-none focus:border-orange-400 focus:bg-white transition-all duration-200 text-gray-800 placeholder-orange-400"
+								placeholder="Ask Fido anything about Shreyas! 🐾"
 								disabled={isProcessing}
 							/>
 							<button
-								onClick={() => handleSendMessage()}
-								className={`glass-chat-send-btn ${userMessage.trim() && !isProcessing ? 'bg-blue-500/80 hover:bg-blue-600/80' : 'bg-gray-500/50'} transition-colors`}
+								onClick={handleSendMessage}
+								className={`absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${userMessage.trim() && !isProcessing
+										? 'bg-orange-400 hover:bg-orange-500 text-white'
+										: 'bg-gray-200 text-gray-400 cursor-not-allowed'
+									}`}
 								disabled={isProcessing || !userMessage.trim()}
 							>
 								{isProcessing ? (
-									<div className="glass-loading-spinner"></div>
+									<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
 								) : (
 									<SendIcon className="h-4 w-4" />
 								)}
@@ -275,25 +347,25 @@ export const ChatAssistant = () => {
 						</div>
 
 						{/* Enhanced suggestion buttons */}
-						<div className="glass-chat-suggestions">
+						<div className="flex flex-wrap gap-2">
 							<SuggestionButton
 								text="Projects"
-								onClick={() => handleSuggestion("Show me projects")}
+								onClick={() => handleSuggestion("Show me Shreyas's projects")}
 								disabled={isProcessing}
 							/>
 							<SuggestionButton
 								text="Skills"
-								onClick={() => handleSuggestion("Go to skills")}
+								onClick={() => handleSuggestion("What are Shreyas's skills?")}
 								disabled={isProcessing}
 							/>
 							<SuggestionButton
 								text="Experience"
-								onClick={() => handleSuggestion("Show experience")}
+								onClick={() => handleSuggestion("Tell me about Shreyas's experience")}
 								disabled={isProcessing}
 							/>
 							<SuggestionButton
-								text="Contact"
-								onClick={() => handleSuggestion("How can I contact Shreyas?")}
+								text="Good Boy!"
+								onClick={() => handleSuggestion("You're such a good boy Fido!")}
 								disabled={isProcessing}
 							/>
 						</div>
@@ -301,17 +373,14 @@ export const ChatAssistant = () => {
 				</div>
 			)}
 
-			{/* Enhanced Minimized Chatbot */}
+			{/* Enhanced Minimized Dog */}
 			{minimized && (
 				<div
-					className="glass-chat-minimized hover:shadow-lg hover:scale-105 transition-all duration-300"
+					className="fixed bottom-24 right-6 z-30 w-16 h-16 bg-gradient-to-r from-orange-400 to-amber-500 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center cursor-pointer border-2 border-orange-300"
 					onClick={() => setMinimized(false)}
 				>
-					<div className="absolute inset-0 rounded-full overflow-hidden">
-						<div className="absolute inset-0 bg-white/10 button-shine"></div>
-					</div>
-					<ChatIcon className="h-6 w-6 text-white relative z-10" />
-					<div className="glass-chat-indicator"></div>
+					<span className="text-2xl animate-bounce">🐕</span>
+					<div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full animate-pulse border-2 border-white"></div>
 				</div>
 			)}
 		</>

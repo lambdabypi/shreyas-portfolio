@@ -8,63 +8,14 @@ class GeminiService {
 			skills: ['skill', 'ability', 'expertise', 'knowledge', 'proficiency', 'tech'],
 			projects: ['project', 'work', 'portfolio', 'showcase', 'creation', 'built', 'web project', 'regular project'],
 			'vr-projects': ['vr', 'virtual reality', 'vr project', 'virtual', 'reality', 'immersive', '3d', 'headset', 'vr work'],
-			experience: ['experience', 'job', 'career', 'position', 'role', 'employment', 'company', 'workplace']
+			experience: ['experience', 'job', 'career', 'position', 'role', 'employment', 'company', 'workplace'],
+			interests: ['interests', 'hobby', 'hobbies', 'personal', 'fun', 'travel', 'dog', 'pet']
 		};
 
 		// Log hostname for debugging
 		if (typeof window !== 'undefined') {
 			console.log('Current hostname:', window.location.hostname);
 		}
-	}
-
-	/**
-	 * Test function to debug navigation detection
-	 * @param {string} testMessage - Message to test
-	 */
-	testNavigationDetection(testMessage) {
-		console.log(`🧪 Testing navigation detection for: "${testMessage}"`);
-
-		const lowerMsg = testMessage.toLowerCase();
-		console.log(`📝 Lowercase message: "${lowerMsg}"`);
-
-		// Check for explicit navigation triggers
-		const navigationTriggers = ['show', 'go to', 'navigate', 'take me', 'view', 'see', 'open', 'display', 'explore'];
-		const hasNavigationTrigger = this.containsAny(lowerMsg, navigationTriggers);
-		console.log(`🎯 Has explicit navigation trigger: ${hasNavigationTrigger}`);
-
-		// Check for implicit navigation phrases
-		const implicitTriggers = [
-			'tell me about', 'what about', 'about his', 'about her', 'about their',
-			'his experience', 'her experience', 'their experience',
-			'his projects', 'her projects', 'their projects',
-			'his skills', 'her skills', 'their skills',
-			'his work', 'her work', 'their work'
-		];
-		const hasImplicitTrigger = this.containsAny(lowerMsg, implicitTriggers);
-		console.log(`🎯 Has implicit navigation trigger: ${hasImplicitTrigger}`);
-
-		if (hasNavigationTrigger || hasImplicitTrigger) {
-			// Check for VR-specific keywords first
-			if (this.containsAny(lowerMsg, this.navigationPatterns['vr-projects'])) {
-				console.log(`🔍 VR keywords detected:`, this.navigationPatterns['vr-projects']);
-				return { shouldNavigate: true, targetSection: 'vr-projects' };
-			}
-
-			// Check other sections
-			for (const [section, patterns] of Object.entries(this.navigationPatterns)) {
-				if (section !== 'vr-projects') {
-					const matches = this.containsAny(lowerMsg, patterns);
-					console.log(`🔍 Section ${section} patterns:`, patterns, `- Matches: ${matches}`);
-					if (matches) {
-						console.log(`✅ Navigation detected for section: ${section}`);
-						return { shouldNavigate: true, targetSection: section };
-					}
-				}
-			}
-		}
-
-		console.log(`❌ No navigation detected`);
-		return { shouldNavigate: false, targetSection: null };
 	}
 
 	/**
@@ -81,16 +32,16 @@ class GeminiService {
 	}
 
 	/**
-	 * Generate a response based on conversation context
+	 * Generate a response based on conversation context with dog personality
 	 * @param {string} userMessage - The user's message
 	 * @param {Array} conversationContext - Optional previous messages for context
-	 * @returns {string} - The generated response
+	 * @returns {Object} - The generated response with mood and navigation intent
 	 */
 	async generateResponse(userMessage, conversationContext = []) {
 		// Add user message to history
 		this.addToHistory({ role: 'user', content: userMessage });
 
-		// Check for navigation intents (keep this feature from your original code)
+		// Check for navigation intents
 		console.log(`🔍 GeminiService: Detecting navigation intent for "${userMessage}"`);
 		const { shouldNavigate, targetSection } = this.detectNavigationIntent(userMessage);
 		console.log(`🔍 GeminiService: Navigation result:`, { shouldNavigate, targetSection });
@@ -102,7 +53,7 @@ class GeminiService {
 
 			console.log('Calling API at:', apiUrl);
 
-			// Call the serverless function
+			// Call the serverless function with dog personality context
 			const response = await fetch(apiUrl, {
 				method: 'POST',
 				headers: {
@@ -110,7 +61,8 @@ class GeminiService {
 				},
 				body: JSON.stringify({
 					message: userMessage,
-					history: this.conversationHistory
+					history: this.conversationHistory,
+					personality: 'dog' // Add personality flag for the API
 				})
 			});
 
@@ -134,20 +86,26 @@ class GeminiService {
 
 			const data = await response.json();
 
-			// Extract the generated text
+			// Extract the generated text and mood
 			const generatedText = data.message;
+			const mood = data.mood || this.determineMoodFromResponse(generatedText);
 
 			// Add response to history
 			this.addToHistory({ role: 'assistant', content: generatedText });
 
 			console.log(`✅ GeminiService: Returning API response with navigation:`, { shouldNavigate, targetSection });
-			return { response: generatedText, shouldNavigate, targetSection };
+			return {
+				response: generatedText,
+				shouldNavigate,
+				targetSection,
+				mood
+			};
 		} catch (error) {
 			console.error('Error calling Gemini API:', error);
 			console.log('🔄 GeminiService: Falling back to local response');
 
-			// Fallback to your existing method if API fails
-			return this.getFallbackResponse(userMessage);
+			// Fallback to dog-themed local response if API fails
+			return this.getDogFallbackResponse(userMessage);
 		}
 	}
 
@@ -195,7 +153,8 @@ class GeminiService {
 			'his experience', 'her experience', 'their experience',
 			'his projects', 'her projects', 'their projects',
 			'his skills', 'her skills', 'their skills',
-			'his work', 'her work', 'their work'
+			'his work', 'her work', 'their work',
+			'his interests', 'her interests', 'their interests'
 		];
 		const hasImplicitTrigger = this.containsAny(lowerMsg, implicitTriggers);
 
@@ -221,6 +180,30 @@ class GeminiService {
 	}
 
 	/**
+	 * Determine mood from response content
+	 * @param {string} response - The response text
+	 * @returns {string} - The determined mood
+	 */
+	determineMoodFromResponse(response) {
+		const lowerResponse = response.toLowerCase();
+
+		if (lowerResponse.includes('excited') || lowerResponse.includes('woof') || lowerResponse.includes('*tail wagging*')) {
+			return 'excited';
+		}
+		if (lowerResponse.includes('curious') || lowerResponse.includes('*tilts head*') || lowerResponse.includes('*sniff*')) {
+			return 'curious';
+		}
+		if (lowerResponse.includes('proud') || lowerResponse.includes('good boy') || lowerResponse.includes('amazing')) {
+			return 'proud';
+		}
+		if (lowerResponse.includes('playful') || lowerResponse.includes('*spins*') || lowerResponse.includes('*runs*')) {
+			return 'playful';
+		}
+
+		return 'happy';
+	}
+
+	/**
 	 * Check if a string contains any of the specified terms
 	 * @param {string} text - Text to check
 	 * @param {Array} terms - Terms to look for
@@ -231,121 +214,129 @@ class GeminiService {
 	}
 
 	/**
-	 * Get a fallback response when API is unavailable
+	 * Get a dog-themed fallback response when API is unavailable
 	 * @param {string} userMessage - User's message
-	 * @returns {Object} - Response and navigation intent
+	 * @returns {Object} - Response with dog personality, navigation intent, and mood
 	 */
-	getFallbackResponse(userMessage) {
-		console.log(`🔄 GeminiService: Using fallback response for "${userMessage}"`);
+	getDogFallbackResponse(userMessage) {
+		console.log(`🔄 GeminiService: Using dog-themed fallback response for "${userMessage}"`);
 		const { shouldNavigate, targetSection } = this.detectNavigationIntent(userMessage);
-		const response = this.getContextualResponse(userMessage);
+		const { response, mood } = this.getDogContextualResponse(userMessage);
 
 		console.log(`🔄 GeminiService: Fallback navigation result:`, { shouldNavigate, targetSection });
-		return { response, shouldNavigate, targetSection };
+		return { response, shouldNavigate, targetSection, mood };
 	}
 
 	/**
-	 * Get a contextual response based on the user message and conversation history
-	 * This is kept from your original code to serve as a fallback
+	 * Get a dog-themed contextual response based on the user message
+	 * @param {string} userMessage - The user's message
+	 * @returns {Object} - Response text and mood
 	 */
-	getContextualResponse(userMessage, navigationContext = '') {
+	getDogContextualResponse(userMessage) {
 		const lowerMsg = userMessage.toLowerCase();
 		const { shouldNavigate, targetSection } = this.detectNavigationIntent(userMessage);
 
-		// Check for navigation intent
+		// Handle "good boy" compliments
+		if (this.containsAny(lowerMsg, ['good boy', 'good dog', 'good fido', 'such a good'])) {
+			return {
+				response: "Woof woof! *tail wagging intensifies* 🐕 Thank you so much! That makes me so happy! *spins in circles with excitement* I'm trying my best to help you learn about my amazing human Shreyas! *happy panting*",
+				mood: 'excited'
+			};
+		}
+
+		// Handle greetings
+		if (this.containsAny(lowerMsg, ['hello', 'hi', 'hey', 'woof', 'good morning', 'good afternoon'])) {
+			return {
+				response: "Woof! *happy barking* 🐕 Hello there! I'm SO excited to see you! *tail wagging* How can I help you learn about my human Shreyas today? I know everything about his amazing work! *happy panting*",
+				mood: 'excited'
+			};
+		}
+
+		// Check for navigation intent responses
 		if (shouldNavigate) {
-			if (targetSection === 'map') {
-				return "I'll take you to the World Map visualization where you can explore Shreyas's journey through education, work, and projects!";
-			} else if (targetSection === 'skills') {
-				return "Let's check out Shreyas's Skills Tree! He excels in Python (95%), Machine Learning (90%), and Data Engineering (90%). The visualization shows how his skills interconnect.";
-			} else if (targetSection === 'projects') {
-				return "I'll show you Shreyas's web development projects! His portfolio includes a Medical Multi-Agent Framework, a Multimodal Video Ad Classifier, and an ML-based Glioma Classification system. Feel free to ask about any specific project!";
+			if (targetSection === 'projects') {
+				return {
+					response: "Arf arf! *excited barking* 🐕 Oh boy oh boy! I LOVE talking about Shreyas's projects! *runs around excitedly* He's built some pawsome things - like his Medical Multi-Agent Framework and Video Ad Classifier! Let me take you there! *happy bouncing*",
+					mood: 'excited'
+				};
 			} else if (targetSection === 'vr-projects') {
-				return "Let me show you Shreyas's VR projects! He's created immersive virtual reality experiences and 3D applications. You'll be able to explore his VR portfolio and see his work in virtual environments!";
+				return {
+					response: "*sniff sniff* 🐾 VR projects? Those are super cool! *tilts head curiously* Shreyas creates these amazing virtual worlds and 3D experiences! I wish I could fetch sticks in VR! Let me show you! *playful barking*",
+					mood: 'curious'
+				};
+			} else if (targetSection === 'skills') {
+				return {
+					response: "Woof! *sits like a good boy* 🏆 My human is SO skilled! *proud stance* He's got 95% Python skills - that's like being able to fetch 95 out of 100 tennis balls! And his Machine Learning skills are at 90%! Let me show you his skills tree! *excited panting*",
+					mood: 'proud'
+				};
 			} else if (targetSection === 'experience') {
-				return "Let's explore Shreyas's professional experience! He's currently a Data Engineer & AI Developer at Intelligent DataWorks and a Co-Founder at Clau API. He previously worked as an AI Engineer at Chipmonk Technologies.";
+				return {
+					response: "*happy barking* 🐕 Shreyas has had such amazing jobs! *tail wagging* He's currently a Data Engineer & AI Developer at Intelligent DataWorks, and he co-founded Clau API! I'm so proud of him! *spins with pride* Let's go see all his experience!",
+					mood: 'proud'
+				};
+			} else if (targetSection === 'interests') {
+				return {
+					response: "Woof woof! *playful bouncing* 🎾 Interests and hobbies? I LOVE this topic! *spins excitedly* Did you know Shreyas loves to travel? And of course, he has ME - his adorable dog companion! Let me show you all the fun stuff! *happy panting*",
+					mood: 'playful'
+				};
 			}
 		}
 
-		// Handle specific query types
-		if (this.containsAny(lowerMsg, ['vr', 'virtual reality', 'immersive', '3d', 'headset'])) {
-			return "Shreyas has worked on several VR and immersive technology projects! His VR portfolio showcases his expertise in creating virtual reality experiences and 3D applications. Would you like me to show you the VR Projects section?";
+		// Handle specific content queries with dog personality
+		if (this.containsAny(lowerMsg, ['python', 'programming', 'code'])) {
+			return {
+				response: "Arf! *excited tail wagging* 🐕 Python is my human's FAVORITE language! He's 95% skilled at it - that's like being the best stick-fetching dog in the park! *happy panting* He uses it for all his AI projects. It's not about snakes though, which is good because I might want to chase them! *playful bark*",
+				mood: 'excited'
+			};
 		}
 
-		if (this.containsAny(lowerMsg, ['project', 'work', 'portfolio', 'build']) && !this.containsAny(lowerMsg, ['vr', 'virtual reality', 'immersive', '3d'])) {
-			return "Shreyas has worked on several impressive projects. His Medical Multi-Agent Framework integrates LLMs with critique mechanisms and achieved 92% alignment with healthcare expertise requirements. His Multimodal Video Ad Classifier analyzes video content with 81.43% human-coder agreement. Would you like me to show you the Projects section?";
+		if (this.containsAny(lowerMsg, ['machine learning', 'ml', 'ai', 'artificial intelligence'])) {
+			return {
+				response: "*tilts head curiously* 🤖 Machine Learning is like teaching computers to be smart like dogs! *proud stance* My human Shreyas is 90% skilled at this - he can make computers learn tricks just like I learned to sit and fetch! His projects use TensorFlow and PyTorch! *happy barking*",
+				mood: 'curious'
+			};
 		}
 
-		if (this.containsAny(lowerMsg, ['experience', 'job', 'work', 'company', 'position'])) {
-			return "Shreyas currently works as a Data Engineer & AI Developer at Intelligent DataWorks, where he architected an HR management platform that improved system architecture by 30%. He's also a Co-Founder at Clau API, developing financial platforms with AI capabilities. Would you like to see more details in the Experience section?";
+		if (this.containsAny(lowerMsg, ['medical', 'healthcare', 'multi-agent'])) {
+			return {
+				response: "Woof! *serious but excited* 🏥 Shreyas built this amazing Medical Multi-Agent Framework! *proud panting* It's like having multiple smart dogs working together to help doctors! It achieved 92% alignment - that's like getting 92 out of 100 treats for good behavior! So impressive! *tail wagging proudly*",
+				mood: 'proud'
+			};
 		}
 
-		// Education queries
-		if (this.containsAny(lowerMsg, ['education', 'study', 'degree', 'school', 'university', 'college', 'academic'])) {
-			return "Shreyas holds an MS in Data Analytics Engineering from Northeastern University (2023-2025) and a BE in AI and ML from BMSIT&M (2019-2023). His academic background combines strong fundamentals in AI with advanced data analytics skills.";
+		if (this.containsAny(lowerMsg, ['video', 'classifier', 'ad'])) {
+			return {
+				response: "*sniff sniff* 📺 The Video Ad Classifier is super cool! *curious head tilt* Shreyas taught computers to watch videos and understand them - kind of like how I can tell the difference between the mailman and a squirrel! It got 81.43% agreement with humans! *excited barking*",
+				mood: 'curious'
+			};
 		}
 
-		// Skills and technical knowledge queries
-		if (this.containsAny(lowerMsg, ['skills', 'technical', 'programming', 'languages', 'proficiency'])) {
-			return "Shreyas is highly skilled in Python (95%), JavaScript (85%), SQL (90%), and React (80%). He's also proficient in AI/ML technologies like TensorFlow (85%), PyTorch (80%), and scikit-learn (90%), with expertise in Data Engineering (90%) and Cloud technologies like AWS (80%) and Docker (85%).";
+		if (this.containsAny(lowerMsg, ['contact', 'email', 'reach'])) {
+			return {
+				response: "Woof! *helpful panting* 📧 You can reach my amazing human at shreyas.atneu@gmail.com! *tail wagging* He loves hearing from people! You can also find him on LinkedIn or GitHub. I'll make sure he sees your message! *happy barking*",
+				mood: 'helpful'
+			};
 		}
 
-		// Contact queries
-		if (this.containsAny(lowerMsg, ['contact', 'email', 'reach', 'connect', 'message', 'get in touch'])) {
-			return "You can contact Shreyas via email at shreyas.atneu@gmail.com. You can also connect with him on LinkedIn or check out his projects on GitHub. Would you like me to navigate to the Contact section?";
+		if (this.containsAny(lowerMsg, ['about', 'who', 'tell me about shreyas'])) {
+			return {
+				response: "*sits attentively* 🐕 Let me tell you about my incredible human! *proud tail wagging* Shreyas is a Data Engineer & AI Developer who's passionate about building amazing AI solutions! He has a Master's in Data Analytics Engineering and works at Intelligent DataWorks. I'm so proud to be his companion! *happy panting*",
+				mood: 'proud'
+			};
 		}
 
-		// About/Bio queries
-		if (this.containsAny(lowerMsg, ['about', 'bio', 'who', 'person', 'background', 'tell me about'])) {
-			return "Shreyas is a Data Engineer & AI Developer with expertise in AI, machine learning, and data engineering. He holds an MS in Data Analytics Engineering and has professional experience at companies like Intelligent DataWorks and Chipmonk Technologies. He's passionate about building AI-powered solutions with practical applications.";
+		if (this.containsAny(lowerMsg, ['you', 'fido', 'dog', 'who are you'])) {
+			return {
+				response: "Woof woof! *excited bouncing* 🐕 I'm Fido! I'm Shreyas's loyal dog and portfolio assistant! *tail wagging intensifies* I know everything about my human - his projects, skills, experience, and all his amazing work! I love helping visitors learn about him! *happy panting* Ask me anything!",
+				mood: 'excited'
+			};
 		}
 
-		// Specific project queries
-		if (this.containsAny(lowerMsg, ['medical', 'multi-agent', 'healthcare', 'agent'])) {
-			return "Shreyas's Medical Multi-Agent Framework is a sophisticated system using Python, PyTorch and Langchain that integrates general-purpose and fine-tuned LLMs with critique mechanisms. The project achieved 92% alignment with healthcare expertise requirements and demonstrates his ability to build complex AI systems for specialized domains.";
-		}
-
-		if (this.containsAny(lowerMsg, ['video', 'classifier', 'ad', 'multimodal'])) {
-			return "The Multimodal Video Ad Classifier project analyzes 150 video ads through video frames, text descriptions, and transcriptions using Python, TensorFlow and OpenCV. It achieved an impressive 81.43% agreement with human coders, showing Shreyas's expertise in computer vision and multimodal AI.";
-		}
-
-		if (this.containsAny(lowerMsg, ['glioma', 'medical', 'classification', 'diagnostic'])) {
-			return "Shreyas's ML-based Glioma Classification project is a medical diagnostic tool using Python, scikit-learn and Pandas that classifies glioma patients as LGG or GBM from 862 patient records. The project achieved 99% accuracy with k-NN and Multinomial Naive Bayes algorithms, demonstrating his ability to build high-accuracy medical AI systems.";
-		}
-
-		// Technical skills specific queries
-		if (this.containsAny(lowerMsg, ['python', 'programming'])) {
-			return "Python is Shreyas's strongest programming language (95% proficiency). He's used it extensively in projects like the Medical Multi-Agent Framework and ML-based Glioma Classification, leveraging libraries like PyTorch, TensorFlow, scikit-learn, and Pandas.";
-		}
-
-		if (this.containsAny(lowerMsg, ['machine learning', 'ml', 'ai', 'artificial intelligence', 'models'])) {
-			return "Shreyas has extensive experience in Machine Learning and AI (90% proficiency), having worked with technologies like TensorFlow, PyTorch, and scikit-learn. His projects demonstrate expertise in both traditional ML algorithms and modern deep learning approaches.";
-		}
-
-		if (this.containsAny(lowerMsg, ['data', 'engineering', 'database', 'sql'])) {
-			return "Shreyas is highly skilled in Data Engineering (90%) and Database Design (85%), with proficiency in SQL (90%). At Intelligent DataWorks, he architected an HR management platform using PostgreSQL, and at Chipmonk Technologies, he built a MySQL database for construction metrics.";
-		}
-
-		if (this.containsAny(lowerMsg, ['cloud', 'aws', 'docker', 'deployment'])) {
-			return "Shreyas has strong cloud computing skills, including AWS (80%) and Docker (85%). At Clau API, he deployed applications on AWS EC2 and built a CICD pipeline at Chipmonk Technologies, demonstrating his ability to create robust, scalable infrastructure.";
-		}
-
-		// Personal questions
-		if (this.containsAny(lowerMsg, ['hobby', 'interest', 'free time', 'passion', 'enjoy'])) {
-			return "While Shreyas is passionate about AI and technology, he also values maintaining a well-rounded life with interests outside of work. For specific details about his personal hobbies and interests, you might want to connect with him directly through the contact section.";
-		}
-
-		if (this.containsAny(lowerMsg, ['located', 'location', 'live', 'based', 'where'])) {
-			return "Shreyas is currently based in Boston, USA, where he works as a Data Engineer & AI Developer at Intelligent DataWorks. Previously, he was located in Bangalore, India, during his time at Chipmonk Technologies.";
-		}
-
-		// Resume/CV queries
-		if (this.containsAny(lowerMsg, ['resume', 'cv', 'download', 'pdf'])) {
-			return "This portfolio provides a comprehensive overview of Shreyas's skills, projects, and experience. If you're interested in a downloadable resume or want to discuss specific opportunities, I recommend reaching out to him directly through the contact section.";
-		}
-
-		// Default response
-		return "I'm here to help you explore Shreyas's portfolio. You can ask about his projects, skills, experience, or education. Or I can help you navigate to different sections of the portfolio. What would you like to know?";
+		// Default enthusiastic response
+		return {
+			response: "*tilts head curiously* 🐕 That's an interesting question! *sniff sniff* Let me think about that... *happy panting* I'm here to help you learn all about my amazing human Shreyas! You can ask me about his projects, skills, experience, or anything else! What would you like to know? *tail wagging encouragingly*",
+			mood: 'curious'
+		};
 	}
 }
 

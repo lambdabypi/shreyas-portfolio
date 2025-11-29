@@ -86,7 +86,7 @@ export const GlassHeader = ({ title, subtitle, className = "" }) => {
 					{title}
 				</h2>
 				{subtitle && (
-					<p className="text-center text-white-300 mt-1">{subtitle}</p>
+					<p className="text-center text-gray-300 mt-1">{subtitle}</p>
 				)}
 			</div>
 			<div className="glass-header-glow"></div>

@@ -13,7 +13,7 @@ export const PortfolioProvider = ({ children }) => {
 	const [activeSection, setActiveSection] = useState('intro');
 	const [isAnimating, setIsAnimating] = useState(false);
 	const [selectedProject, setSelectedProject] = useState(null);
-	const [selectedVRProject, setSelectedVRProject] = useState(null); // Added VR project state
+	const [selectedVRProject, setSelectedVRProject] = useState(null);
 
 	// Chat assistant state
 	const [showAssistant, setShowAssistant] = useState(false);
@@ -23,9 +23,10 @@ export const PortfolioProvider = ({ children }) => {
 		{
 			id: 0,
 			sender: 'bot',
-			message: "Hi there! I'm Fido, Shreyas's portfolio assistant. Ask me anything about his projects, skills, or experience!",
+			message: "Woof! Hi there! I'm Fido! 🐕 *tail wagging intensifies* I'm so excited to help you learn about my amazing human Shreyas! Ask me anything about his projects, skills, or experience! *happy panting*",
 			isGeminiResponse: true,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
+			mood: 'excited'
 		}
 	]);
 	const [isTyping, setIsTyping] = useState(false);
@@ -47,7 +48,7 @@ export const PortfolioProvider = ({ children }) => {
 	const userScrolledRef = useRef(false);
 	const mousePosition = useRef({ x: 0, y: 0 });
 
-	// Handle section changes with animation - WITH DEBUG LOGGING
+	// Handle section changes with animation
 	const changeSection = (section) => {
 		console.log(`🔄 changeSection called with: ${section} (current: ${activeSection})`);
 
@@ -61,14 +62,14 @@ export const PortfolioProvider = ({ children }) => {
 		setTimeout(() => {
 			console.log(`🎯 Setting active section to: ${section}`);
 			setActiveSection(section);
-			setSelectedProject(null); // Clear selected project
-			setSelectedVRProject(null); // Clear selected VR project
+			setSelectedProject(null);
+			setSelectedVRProject(null);
 			setIsAnimating(false);
 			console.log(`✨ Navigation completed to: ${section}`);
 		}, 800);
 	};
 
-	// Handle chat messages - WITH DEBUG LOGGING
+	// Handle chat messages with dog personality
 	const handleSendMessage = async () => {
 		if (!userMessage.trim() || isProcessing) return;
 
@@ -93,7 +94,7 @@ export const PortfolioProvider = ({ children }) => {
 		try {
 			// Process message with GeminiService
 			console.log(`📤 Sending message to GeminiService: "${userMsg}"`);
-			const { response, shouldNavigate, targetSection } =
+			const { response, shouldNavigate, targetSection, mood } =
 				await geminiServiceInstance.generateResponse(userMsg);
 
 			// DEBUG: Log navigation details
@@ -103,7 +104,8 @@ export const PortfolioProvider = ({ children }) => {
 				targetSection,
 				currentActiveSection: activeSection,
 				isAnimating,
-				isProcessing
+				isProcessing,
+				mood
 			});
 
 			// Handle navigation intents
@@ -117,21 +119,23 @@ export const PortfolioProvider = ({ children }) => {
 				console.log('❌ No navigation triggered:', { shouldNavigate, targetSection });
 			}
 
-			// Add bot response
+			// Add bot response with mood
 			setChatMessages(prev => [...prev, {
 				id: prev.length,
 				sender: 'bot',
 				message: response,
+				mood: mood || 'happy',
 				isGeminiResponse: true,
 				timestamp: new Date().toISOString()
 			}]);
 		} catch (error) {
 			console.error('Error processing message:', error);
-			// Add error message
+			// Add error message with sad dog personality
 			setChatMessages(prev => [...prev, {
 				id: prev.length,
 				sender: 'bot',
-				message: "I'm having trouble processing your request. Please try again.",
+				message: "*whimpers softly* 🐕 Sorry, I'm having trouble understanding right now... *sad puppy eyes* Could you try asking me again? I really want to help! *hopeful tail wag*",
+				mood: 'sad',
 				isGeminiResponse: false,
 				timestamp: new Date().toISOString()
 			}]);
@@ -226,16 +230,17 @@ export const PortfolioProvider = ({ children }) => {
 		}
 	};
 
-	// Clear chat history
+	// Clear chat history with dog personality
 	const clearChatHistory = () => {
-		if (window.confirm("Are you sure you want to clear the chat history?")) {
+		if (window.confirm("Are you sure you want to clear our conversation? 🐕 I'll miss our chat!")) {
 			setChatMessages([
 				{
 					id: 0,
 					sender: 'bot',
-					message: "Hi there! I'm Fido, Shreyas's portfolio assistant. Ask me anything about his projects, skills, or experience!",
+					message: "Woof! Hi there! I'm Fido! 🐕 *tail wagging intensifies* I'm so excited to help you learn about my amazing human Shreyas! Ask me anything about his projects, skills, or experience! *happy panting*",
 					isGeminiResponse: true,
-					timestamp: new Date().toISOString()
+					timestamp: new Date().toISOString(),
+					mood: 'excited'
 				}
 			]);
 			setShouldScrollToBottom(true);
@@ -250,8 +255,8 @@ export const PortfolioProvider = ({ children }) => {
 		isAnimating,
 		selectedProject,
 		setSelectedProject,
-		selectedVRProject,        // Added VR project state
-		setSelectedVRProject,     // Added VR project setter
+		selectedVRProject,
+		setSelectedVRProject,
 		changeSection,
 
 		// Chat state
