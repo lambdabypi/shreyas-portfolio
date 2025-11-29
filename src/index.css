@@ -726,3 +726,408 @@ code {
 .glass-nav button:hover::after {
   left: 100%;
 }
+
+/* Pixel Character Containers */
+.pixel-dog-container,
+.pixel-human-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Pixel Art Rendering */
+.pixel-dog,
+.pixel-human {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Pixel Dog Animations */
+.pixel-dog {
+  animation: dogBounce 2s infinite ease-in-out;
+}
+
+@keyframes dogBounce {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Pixel Human Animations */
+.pixel-human {
+  animation: humanSway 3s infinite ease-in-out;
+}
+
+@keyframes humanSway {
+
+  0%,
+  100% {
+    transform: translateX(0px);
+  }
+
+  50% {
+    transform: translateX(1px);
+  }
+}
+
+/* Typing Animation for Human */
+.pixel-human.typing {
+  animation: typingMotion 0.5s infinite ease-in-out;
+}
+
+@keyframes typingMotion {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Enhanced Chat Bubble for Pixel Characters */
+.glass-message-bubble {
+  position: relative;
+  overflow: visible;
+  /* Allow pixel characters to show outside */
+  margin-left: 20px;
+  /* Space for left pixel characters */
+  margin-right: 20px;
+  /* Space for right pixel characters */
+}
+
+/* Pixel Character Show/Hide Animations */
+.pixel-character-enter {
+  opacity: 0;
+  transform: scale(0.5) translateY(10px);
+  animation: pixelCharacterEnter 0.5s ease-out forwards;
+}
+
+@keyframes pixelCharacterEnter {
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0px);
+  }
+}
+
+.pixel-character-exit {
+  animation: pixelCharacterExit 0.3s ease-in forwards;
+}
+
+@keyframes pixelCharacterExit {
+  to {
+    opacity: 0;
+    transform: scale(0.3) translateY(-10px);
+  }
+}
+
+/* Enhanced Typing Indicator with Dog */
+.glass-typing-indicator {
+  position: relative;
+  margin-left: 20px;
+  /* Space for pixel dog */
+}
+
+/* Sparkle Effects for Pixel Characters */
+.pixel-sparkle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #FFD700;
+  border-radius: 50%;
+  animation: sparkle 1.5s infinite ease-in-out;
+}
+
+@keyframes sparkle {
+
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Enhanced Chat Input with Pixel Human */
+.glass-chat-input-wrapper {
+  position: relative;
+  margin-left: 15px;
+  /* Space for typing pixel human */
+}
+
+/* Send Button Pixel Effect */
+.glass-chat-send-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-chat-send-btn:hover:not(:disabled) {
+  animation: buttonPixelGlow 0.5s ease-in-out;
+}
+
+@keyframes buttonPixelGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+  }
+
+  50% {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+  }
+}
+
+/* Minimized Chat with Pixel Dog */
+.glass-chat-minimized {
+  position: fixed;
+  bottom: 6rem;
+  right: 6rem;
+  width: 4rem;
+  height: 4rem;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 30;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: visible;
+}
+
+/* Enhanced Pixel Dog Moods */
+.pixel-dog.excited {
+  animation: dogExcited 0.3s infinite ease-in-out;
+}
+
+@keyframes dogExcited {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  25% {
+    transform: translateY(-2px) rotate(1deg);
+  }
+
+  75% {
+    transform: translateY(-2px) rotate(-1deg);
+  }
+}
+
+.pixel-dog.thinking {
+  animation: dogThinking 2s infinite ease-in-out;
+  filter: sepia(0.3);
+}
+
+@keyframes dogThinking {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-1px);
+  }
+}
+
+/* Tail Wag Animation */
+.pixel-dog-tail {
+  transform-origin: center bottom;
+  animation: tailWag 0.5s infinite ease-in-out alternate;
+}
+
+@keyframes tailWag {
+  0% {
+    transform: rotate(-10deg);
+  }
+
+  100% {
+    transform: rotate(10deg);
+  }
+}
+
+/* Enhanced Header with Pixel Characters */
+.glass-chat-header {
+  overflow: visible;
+  /* Allow pixel characters to show */
+  position: relative;
+}
+
+/* User Typing Indicator in Header */
+.header-user-typing {
+  position: absolute;
+  right: 80px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  animation: fadeInOut 2s infinite;
+}
+
+@keyframes fadeInOut {
+
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Responsive Adjustments for Pixel Characters */
+@media (max-width: 640px) {
+  .glass-message-bubble {
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+
+  .glass-chat-input-wrapper {
+    margin-left: 10px;
+  }
+
+  .pixel-dog,
+  .pixel-human {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Pixel Art Sharp Edges */
+canvas,
+svg {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Enhanced Glow Effects for Pixel Characters */
+.pixel-character-glow {
+  filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));
+}
+
+/* Message Entrance Animation with Pixel Character */
+.glass-message.with-pixel-char {
+  animation: messageWithPixelEnter 0.6s ease-out;
+}
+
+@keyframes messageWithPixelEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.02);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+}
+
+/* Hover Effects for Pixel Characters */
+.pixel-dog:hover,
+.pixel-human:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+/* Special Effects for Excited Mood */
+.pixel-dog.excited::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border: 2px dashed #FFD700;
+  border-radius: 50%;
+  animation: excitementBorder 1s infinite linear;
+}
+
+@keyframes excitementBorder {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Thinking Bubble Animation */
+.pixel-thinking-bubble {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  width: 20px;
+  height: 15px;
+  animation: thinkingBubble 2s infinite ease-in-out;
+}
+
+@keyframes thinkingBubble {
+
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(0px);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px);
+  }
+}
+
+/* Sound Wave Effect for Speaking */
+.pixel-sound-wave {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 2px;
+  background: rgba(59, 130, 246, 0.6);
+  animation: soundWave 0.8s infinite ease-in-out;
+}
+
+@keyframes soundWave {
+
+  0%,
+  100% {
+    width: 10px;
+    opacity: 0.6;
+  }
+
+  50% {
+    width: 20px;
+    opacity: 1;
+  }
+}
