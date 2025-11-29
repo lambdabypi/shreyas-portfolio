@@ -3,8 +3,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import {
 	XIcon,
-	ChatIcon,
-	SparklesIcon,
 	TrashIcon,
 	MinusIcon,
 	ChevronDownIcon,
@@ -101,13 +99,13 @@ export const ChatBubble = ({ message, formatTimestamp }) => {
 			)}
 
 			<div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-lg relative ${message.sender === 'user'
-					? 'bg-blue-500 text-white ml-auto rounded-br-sm'
-					: 'bg-white text-gray-800 rounded-bl-sm border-2 border-orange-200'
+				? 'bg-blue-500 text-white ml-auto rounded-br-sm'
+				: 'bg-white text-gray-800 rounded-bl-sm border-2 border-orange-200'
 				}`}>
 				{/* Speech bubble tail */}
 				<div className={`absolute top-4 ${message.sender === 'user'
-						? 'right-0 translate-x-full'
-						: 'left-0 -translate-x-full'
+					? 'right-0 translate-x-full'
+					: 'left-0 -translate-x-full'
 					} w-0 h-0 border-8 border-transparent ${message.sender === 'user' ? 'border-l-blue-500' : 'border-r-white'
 					}`}></div>
 
@@ -142,8 +140,8 @@ export const SuggestionButton = ({ text, onClick, disabled }) => {
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => setIsHovered(false)}
 			className={`px-3 py-2 bg-gradient-to-r from-orange-200 to-amber-200 rounded-full text-sm text-orange-800 font-medium border border-orange-300 transition-all duration-200 relative overflow-hidden ${disabled
-					? 'opacity-50 cursor-not-allowed'
-					: 'hover:shadow-md hover:from-orange-300 hover:to-amber-300 transform hover:-translate-y-0.5'
+				? 'opacity-50 cursor-not-allowed'
+				: 'hover:shadow-md hover:from-orange-300 hover:to-amber-300 transform hover:-translate-y-0.5'
 				}`}
 			disabled={disabled}
 		>
@@ -333,8 +331,8 @@ export const ChatAssistant = () => {
 							<button
 								onClick={handleSendMessage}
 								className={`absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${userMessage.trim() && !isProcessing
-										? 'bg-orange-400 hover:bg-orange-500 text-white'
-										: 'bg-gray-200 text-gray-400 cursor-not-allowed'
+									? 'bg-orange-400 hover:bg-orange-500 text-white'
+									: 'bg-gray-200 text-gray-400 cursor-not-allowed'
 									}`}
 								disabled={isProcessing || !userMessage.trim()}
 							>
