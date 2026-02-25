@@ -1,0 +1,352 @@
+/* src/components/sections/InterestsGrid.css */
+
+/* ── Root ──────────────────────────────────────────────────────────────────── */
+.interests-root {
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+}
+
+/* ── Card grid ─────────────────────────────────────────────────────────────── */
+.interests-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 0.85rem;
+}
+
+@media (max-width: 640px) {
+	.interests-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+/* ── Individual card ───────────────────────────────────────────────────────── */
+.interest-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.3rem;
+	padding: 1.1rem 1rem 1rem;
+	border-radius: 1rem;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	cursor: pointer;
+	text-align: left;
+	transition: border-color 0.2s, box-shadow 0.2s;
+	overflow: hidden;
+}
+
+.interest-card::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	box-shadow: inset 0 0 0 1.5px var(--accent);
+	opacity: 0;
+	transition: opacity 0.22s;
+	pointer-events: none;
+}
+
+.interest-card:hover::before,
+.interest-card--active::before {
+	opacity: 1;
+}
+
+.interest-card--active {
+	background-color: rgba(255, 255, 255, 0.07);
+}
+
+.interest-card-icon {
+	font-size: 1.9rem;
+	line-height: 1;
+}
+
+.interest-card-title {
+	font-size: 0.95rem;
+	font-weight: 700;
+	color: white;
+}
+
+.interest-card-count {
+	font-size: 0.7rem;
+	color: rgba(255, 255, 255, 0.35);
+	transition: color 0.2s;
+}
+
+.interest-card:hover .interest-card-count,
+.interest-card--active .interest-card-count {
+	color: var(--accent);
+}
+
+/* ── Detail panel ──────────────────────────────────────────────────────────── */
+.detail-panel {
+	border-radius: 1.1rem;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	background: rgba(255, 255, 255, 0.05);
+	backdrop-filter: blur(18px);
+	-webkit-backdrop-filter: blur(18px);
+	box-shadow:
+		0 0 0 1px rgba(255, 255, 255, 0.04),
+		0 8px 32px rgba(0, 0, 0, 0.35),
+		0 0 40px color-mix(in srgb, var(--accent) 18%, transparent);
+	overflow: hidden;
+}
+
+/* Header */
+.detail-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem 1.25rem 0.75rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.detail-header-left {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+}
+
+.detail-header-icon {
+	font-size: 1.4rem;
+}
+
+.detail-header-title {
+	font-size: 1.15rem;
+	font-weight: 700;
+	color: white;
+	margin: 0;
+}
+
+.detail-close-btn {
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	background: rgba(255, 255, 255, 0.07);
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 0.7rem;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.2s, color 0.2s;
+	flex-shrink: 0;
+}
+
+.detail-close-btn:hover {
+	background: rgba(255, 255, 255, 0.15);
+	color: white;
+}
+
+/* Body: side-by-side layout */
+.detail-body {
+	display: grid;
+	grid-template-columns: 1fr 1.8fr;
+	gap: 0;
+}
+
+@media (max-width: 600px) {
+	.detail-body {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* Left text pane */
+.detail-text {
+	padding: 1.1rem 1.25rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.85rem;
+	border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 600px) {
+	.detail-text {
+		border-right: none;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+	}
+}
+
+.detail-description {
+	font-size: 0.855rem;
+	line-height: 1.65;
+	color: rgba(255, 255, 255, 0.58);
+	margin: 0;
+}
+
+/* Tabs */
+.detail-tabs {
+	display: flex;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.detail-tab {
+	padding: 0.28rem 0.8rem;
+	border-radius: 999px;
+	font-size: 0.76rem;
+	font-weight: 500;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	background: transparent;
+	color: rgba(255, 255, 255, 0.45);
+	cursor: pointer;
+	transition: all 0.18s;
+}
+
+.detail-tab:hover {
+	color: white;
+	border-color: rgba(255, 255, 255, 0.3);
+}
+
+.detail-tab--on {
+	background: rgba(255, 255, 255, 0.1);
+	border-color: var(--accent);
+	color: white;
+}
+
+/* Right media pane */
+.detail-media {
+	padding: 1.1rem 1.25rem;
+	background: rgba(0, 0, 0, 0.15);
+}
+
+.media-wrap {
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+}
+
+/* Main image container */
+.media-main-wrap {
+	position: relative;
+	border-radius: 0.65rem;
+	overflow: hidden;
+	aspect-ratio: 16/9;
+	background: rgba(0, 0, 0, 0.4);
+}
+
+.media-main-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+/* Caption */
+.media-caption {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 0.5rem 0.7rem;
+	font-size: 0.73rem;
+	color: rgba(255, 255, 255, 0.85);
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.72), transparent);
+}
+
+/* Counter badge */
+.media-counter {
+	position: absolute;
+	top: 0.5rem;
+	right: 0.6rem;
+	font-size: 0.68rem;
+	color: rgba(255, 255, 255, 0.7);
+	background: rgba(0, 0, 0, 0.5);
+	padding: 0.15rem 0.45rem;
+	border-radius: 999px;
+	backdrop-filter: blur(4px);
+}
+
+/* Prev / Next arrows */
+.media-arrow {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	background: rgba(0, 0, 0, 0.55);
+	color: white;
+	font-size: 1.25rem;
+	line-height: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: background 0.18s;
+	z-index: 2;
+}
+
+.media-arrow:hover {
+	background: rgba(0, 0, 0, 0.8);
+}
+
+.media-arrow--l {
+	left: 0.5rem;
+}
+
+.media-arrow--r {
+	right: 0.5rem;
+}
+
+/* ── Thumbnail strip ───────────────────────────────────────────────────────── */
+.media-strip {
+	display: flex;
+	gap: 0.45rem;
+	overflow-x: auto;
+	padding-bottom: 2px;
+	/* hide scrollbar but keep scrollability */
+	scrollbar-width: none;
+}
+
+.media-strip::-webkit-scrollbar {
+	display: none;
+}
+
+.media-thumb {
+	flex-shrink: 0;
+	width: 56px;
+	height: 42px;
+	border-radius: 0.4rem;
+	overflow: hidden;
+	border: 2px solid transparent;
+	background: rgba(0, 0, 0, 0.3);
+	cursor: pointer;
+	padding: 0;
+	transition: border-color 0.18s, opacity 0.18s;
+	opacity: 0.55;
+}
+
+.media-thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.media-thumb:hover {
+	opacity: 0.85;
+}
+
+.media-thumb--on {
+	border-color: var(--accent);
+	opacity: 1;
+}
+
+/* ── Video ─────────────────────────────────────────────────────────────────── */
+.media-video-wrap {
+	position: relative;
+	border-radius: 0.65rem;
+	overflow: hidden;
+	aspect-ratio: 16/9;
+}
+
+.media-video {
+	width: 100%;
+	height: 100%;
+	display: block;
+}

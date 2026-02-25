@@ -1,7 +1,7 @@
 // src/components/sections/InterestsSection.js
 import { usePortfolio } from '../../context/PortfolioContext';
 import { GlassHeader } from '../ui/GlassComponents';
-import TimelineExperience from './TimelineExperience';
+import InterestGrid from './InterestsGrid';
 
 // Main Interests Section component
 const InterestsSection = () => {
@@ -15,13 +15,13 @@ const InterestsSection = () => {
 				<div className="p-6 overflow-y-auto max-h-[80vh] glass-scrollbar">
 					{/* Introduction */}
 					<div className="mb-8">
-						<p className="text-black-200 mb-4">
+						<p className="text-white mb-4">
 							Beyond technology and professional endeavors, I enjoy exploring various interests that keep me balanced and inspired. Here's a glimpse into my personal world outside of work.
 						</p>
 					</div>
 
 					{/* Timeline Experience */}
-					<TimelineExperience />
+					<InterestGrid />
 				</div>
 			</div>
 		</div>

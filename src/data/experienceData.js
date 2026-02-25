@@ -2,20 +2,8 @@
 
 export const experiences = [
 	{
-		title: 'Data Engineer & AI Developer',
-		company: 'Intelligent DataWorks',
-		location: 'Boston, USA',
-		period: 'Jan 2025 - Present',
-		description: [
-			'Architected HR management platform integrating job operations, applicant tracking, applicant management, jobs management using REST API, FastAPI, and PostgreSQL with Pydantic, improving system architecture by 30%.',
-			'Engineered authentication framework with JWT tokens, bcrypt password hashing, and AWS SES for email verification to implement persistent sessions and role-based access control, enhancing security while improving user experience.',
-			'Developed HR workflows in Python, Streamlit and PostgreSQL by creating interactive dashboards and implementing AI algorithms to enable data-driven hiring decisions and automated candidate evaluation.'
-		],
-		skills: ['Python', 'FastAPI', 'PostgreSQL', 'JWT', 'AWS SES', 'Streamlit', 'AI Algorithms']
-	},
-	{
-		title: 'Co-Founder and Lead Developer',
-		company: 'Clau API, Vivytech',
+		title: 'AI/ML Engineer',
+		company: 'Vivytech',
 		location: 'Boston, USA',
 		period: 'May 2024 - Present',
 		description: [
@@ -26,7 +14,19 @@ export const experiences = [
 		skills: ['REST API', 'JWT', '2FA', 'AWS EC2', 'Cohere AI', 'Plaid API', 'React', 'GDPR']
 	},
 	{
-		title: 'AI Engineer',
+		title: 'AI/ML Engineer',
+		company: 'Intelligent DataWorks',
+		location: 'Boston, USA',
+		period: 'Jan 2025 - Aug-2025',
+		description: [
+			'Architected HR management platform integrating job operations, applicant tracking, applicant management, jobs management using REST API, FastAPI, and PostgreSQL with Pydantic, improving system architecture by 30%.',
+			'Engineered authentication framework with JWT tokens, bcrypt password hashing, and AWS SES for email verification to implement persistent sessions and role-based access control, enhancing security while improving user experience.',
+			'Developed HR workflows in Python, Streamlit and PostgreSQL by creating interactive dashboards and implementing AI algorithms to enable data-driven hiring decisions and automated candidate evaluation.'
+		],
+		skills: ['Python', 'FastAPI', 'PostgreSQL', 'JWT', 'AWS SES', 'Streamlit', 'AI Algorithms']
+	},
+	{
+		title: 'AI/ML Engineer',
 		company: 'Chipmonk Technologies Pvt. Ltd.',
 		location: 'Bangalore, India',
 		period: 'Sept 2022 - Aug 2023',
