@@ -9,37 +9,37 @@ const NAV_SECTIONS = [
 		section: 'projects',
 		icon: '🚀',
 		label: 'Projects',
-		desc: 'Data & AI work',
+		desc: 'Things I\'ve shipped',
 	},
 	{
 		section: 'vr-projects',
 		icon: '🥽',
 		label: 'VR Projects',
-		desc: 'Immersive experiences',
+		desc: 'Immersive builds',
 	},
 	{
 		section: 'interests',
 		icon: '❤️',
 		label: 'Interests',
-		desc: 'Life outside of work',
+		desc: 'What I\'m into',
 	},
 	{
 		section: 'skills',
 		icon: '⚡',
 		label: 'Skills',
-		desc: 'Tools & technologies',
+		desc: 'My toolkit',
 	},
 	{
 		section: 'experience',
 		icon: '💼',
 		label: 'Experience',
-		desc: 'Work history',
+		desc: 'Where I\'ve worked',
 	},
 	{
 		section: 'contact',
 		icon: '✉️',
 		label: 'Contact',
-		desc: 'Get in touch',
+		desc: 'Say hello',
 	},
 ];
 
@@ -70,9 +70,10 @@ const IntroSection = () => {
 				<div className="text-center sm:text-left">
 					<GlitchEffects />
 					<p className="mt-3 text-white/60 text-sm leading-relaxed max-w-lg">
-						MS in Data Analytics Engineering at Northeastern University. I build AI-powered systems,
-						data pipelines, and immersive experiences, passionate about making technology both
-						powerful and human.
+						Software engineer and AI builder, finishing my MS at Northeastern.
+						I spend most of my time shipping production apps and pushing what's possible
+						with LLMs and multi-agent systems. Outside of code, I'm into VR, music,
+						and figuring out where to travel next.
 					</p>
 
 					{/* Social links */}
@@ -94,7 +95,7 @@ const IntroSection = () => {
 			</div>
 
 			{/* ── Section cards grid ───────────────────────────────────────── */}
-			<div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+			<div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
 				{NAV_SECTIONS.map(({ section, icon, label, desc }) => (
 					<button
 						key={section}
@@ -107,11 +108,6 @@ const IntroSection = () => {
 					</button>
 				))}
 			</div>
-
-			{/* ── Navbar hint ──────────────────────────────────────────────── */}
-			<p className="text-center text-white/25 text-xs tracking-widest select-none">
-				↑ MOVE MOUSE TO BOTTOM EDGE FOR QUICK NAV ↑
-			</p>
 		</div>
 	);
 };

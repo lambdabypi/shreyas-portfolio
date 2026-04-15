@@ -1,5 +1,5 @@
 // src/components/ConstellationClickerOverlay.js
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Star, Zap, Trophy, TrendingUp, Sparkles, Crown } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 
@@ -361,29 +361,30 @@ const ConstellationClickerOverlay = () => {
 			{gameData.gameStarted && (
 				<button
 					onClick={toggleGameUI}
-					className="fixed top-4 right-4 z-40 bg-gradient-to-r from-purple-500/80 to-blue-500/80 backdrop-blur-md rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 border border-white/30 game-ui"
+					className="fixed top-4 right-4 z-40 bg-gradient-to-r from-purple-500/80 to-blue-500/80 backdrop-blur-md rounded-full p-2.5 sm:p-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 border border-white/30 game-ui"
 				>
-					<Trophy className="w-5 h-5 text-white" />
+					<Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
 				</button>
 			)}
 
 			{/* Enhanced Game UI */}
 			{showGameUI && gameData.gameStarted && (
-				<div className="fixed top-4 left-4 z-40 space-y-4 game-ui max-h-screen overflow-y-auto">
+				<div className="fixed top-4 left-2 sm:left-4 z-40 space-y-3 game-ui max-h-[calc(100vh-2rem)] overflow-y-auto pb-4"
+					style={{ width: 'min(18rem, calc(100vw - 1rem))' }}>
 					{/* Progress Bar */}
-					<div className="bg-black/30 backdrop-blur-md rounded-lg p-4 shadow-lg border border-white/20 min-w-80">
+					<div className="bg-black/30 backdrop-blur-md rounded-lg p-3 sm:p-4 shadow-lg border border-white/20 w-full">
 						<div className="flex items-center justify-between mb-2">
 							<div className="flex items-center gap-2">
 								<Star className="w-4 h-4 text-yellow-400" />
-								<span className="text-white font-semibold">Level {gameData.level}</span>
+								<span className="text-white font-semibold text-sm">Level {gameData.level}</span>
 							</div>
 							<div className="flex items-center gap-2">
 								<Trophy className="w-4 h-4 text-purple-400" />
-								<span className="text-white text-sm">{gameData.skillPoints} SP</span>
+								<span className="text-white text-xs sm:text-sm">{gameData.skillPoints} SP</span>
 							</div>
 						</div>
 
-						<div className="bg-gray-700 rounded-full h-3 overflow-hidden mb-2">
+						<div className="bg-gray-700 rounded-full h-2.5 overflow-hidden mb-2">
 							<div
 								className="bg-gradient-to-r from-blue-500 to-purple-500 h-full transition-all duration-300"
 								style={{ width: `${((gameData.experience % (gameData.level * 150)) / (gameData.level * 150)) * 100}%` }}
@@ -397,17 +398,17 @@ const ConstellationClickerOverlay = () => {
 					</div>
 
 					{/* Constellations Progress */}
-					<div className="bg-black/30 backdrop-blur-md rounded-lg p-4 shadow-lg border border-white/20 min-w-80">
-						<h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+					<div className="bg-black/30 backdrop-blur-md rounded-lg p-3 sm:p-4 shadow-lg border border-white/20 w-full">
+						<h3 className="text-white font-semibold mb-3 flex items-center gap-2 text-sm">
 							<Star className="w-4 h-4" />
 							Constellations ({gameData.unlockedConstellations.size}/{constellations.length})
 						</h3>
 
-						<div className="space-y-2 max-h-32 overflow-y-auto">
+						<div className="space-y-1.5 max-h-28 overflow-y-auto">
 							{constellations.map((constellation) => (
 								<div
 									key={constellation.id}
-									className={`p-2 rounded text-xs transition-all ${gameData.unlockedConstellations.has(constellation.id)
+									className={`p-1.5 rounded text-xs transition-all ${gameData.unlockedConstellations.has(constellation.id)
 										? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-400/50 text-yellow-200'
 										: gameData.level >= constellation.level
 											? 'bg-blue-500/20 border border-blue-400/50 text-blue-200'
@@ -420,7 +421,7 @@ const ConstellationClickerOverlay = () => {
 									</div>
 									<div className="opacity-75 text-xs">{constellation.description}</div>
 									{gameData.unlockedConstellations.has(constellation.id) && (
-										<div className="text-xs mt-1" style={{ color: constellation.color }}>
+										<div className="text-xs mt-0.5" style={{ color: constellation.color }}>
 											⭐ Unlocked & Glowing
 										</div>
 									)}
@@ -430,8 +431,8 @@ const ConstellationClickerOverlay = () => {
 					</div>
 
 					{/* Upgrades */}
-					<div className="bg-black/30 backdrop-blur-md rounded-lg p-4 shadow-lg border border-white/20 min-w-80">
-						<h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+					<div className="bg-black/30 backdrop-blur-md rounded-lg p-3 sm:p-4 shadow-lg border border-white/20 w-full">
+						<h3 className="text-white font-semibold mb-2 flex items-center gap-2 text-sm">
 							<TrendingUp className="w-4 h-4" />
 							Upgrades
 						</h3>
@@ -440,61 +441,61 @@ const ConstellationClickerOverlay = () => {
 							<button
 								onClick={() => buyUpgrade('autoClicker')}
 								disabled={gameData.skillPoints < 100}
-								className="w-full p-2 bg-blue-600/70 hover:bg-blue-600/90 disabled:bg-gray-600/50 disabled:opacity-50 rounded text-white text-left transition-colors text-sm"
+								className="w-full p-2 bg-blue-600/70 hover:bg-blue-600/90 disabled:bg-gray-600/50 disabled:opacity-50 rounded text-white text-left transition-colors text-xs"
 							>
 								<div className="font-medium">Auto-Clicker Lvl {gameData.autoClickerLevel + 1}</div>
-								<div className="text-xs opacity-75">Cost: 100 SP • +{(gameData.autoClickerLevel + 1) * 2} XP/2s</div>
+								<div className="opacity-75">Cost: 100 SP • +{(gameData.autoClickerLevel + 1) * 2} XP/2s</div>
 							</button>
 
 							<button
 								onClick={() => buyUpgrade('multiplier')}
 								disabled={gameData.skillPoints < 200}
-								className="w-full p-2 bg-purple-600/70 hover:bg-purple-600/90 disabled:bg-gray-600/50 disabled:opacity-50 rounded text-white text-left transition-colors text-sm"
+								className="w-full p-2 bg-purple-600/70 hover:bg-purple-600/90 disabled:bg-gray-600/50 disabled:opacity-50 rounded text-white text-left transition-colors text-xs"
 							>
 								<div className="font-medium">Click Power x{gameData.clickMultiplier + 1}</div>
-								<div className="text-xs opacity-75">Cost: 200 SP • +{15 * (gameData.clickMultiplier + 1)} XP per click</div>
+								<div className="opacity-75">Cost: 200 SP • +{15 * (gameData.clickMultiplier + 1)} XP per click</div>
 							</button>
 						</div>
 					</div>
 
 					{/* Achievements */}
-					<div className="bg-black/30 backdrop-blur-md rounded-lg p-4 shadow-lg border border-white/20 min-w-80">
-						<h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+					<div className="bg-black/30 backdrop-blur-md rounded-lg p-3 sm:p-4 shadow-lg border border-white/20 w-full">
+						<h3 className="text-white font-semibold mb-2 flex items-center gap-2 text-sm">
 							<Trophy className="w-4 h-4" />
 							Achievements ({gameData.achievements.size}/{achievementList.length})
 						</h3>
 
-						<div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
+						<div className="grid grid-cols-2 gap-1.5 max-h-28 overflow-y-auto">
 							{achievementList.map((achievement) => (
 								<div
 									key={achievement.id}
-									className={`p-2 rounded text-xs transition-all ${gameData.achievements.has(achievement.id)
+									className={`p-1.5 rounded text-xs transition-all ${gameData.achievements.has(achievement.id)
 										? 'bg-yellow-500/20 border border-yellow-400/50 text-yellow-200'
 										: 'bg-gray-700/50 text-gray-400 border border-gray-600/50'
 										}`}
 								>
-									<div className="flex items-center gap-1 mb-1">
+									<div className="flex items-center gap-1 mb-0.5">
 										<span className="text-sm">{achievement.icon}</span>
-										<span className="font-medium truncate">{achievement.name}</span>
+										<span className="font-medium truncate text-xs">{achievement.name}</span>
 									</div>
-									<div className="opacity-75 truncate">{achievement.description}</div>
+									<div className="opacity-75 truncate text-xs">{achievement.description}</div>
 								</div>
 							))}
 						</div>
 					</div>
 
 					{/* Controls */}
-					<div className="bg-black/30 backdrop-blur-md rounded-lg p-3 shadow-lg border border-white/20 min-w-80">
+					<div className="bg-black/30 backdrop-blur-md rounded-lg p-2.5 shadow-lg border border-white/20 w-full">
 						<div className="flex gap-2">
 							<button
 								onClick={toggleGameUI}
-								className="flex-1 bg-gray-600/70 hover:bg-gray-600/90 text-white px-3 py-1 rounded text-sm transition-colors"
+								className="flex-1 bg-gray-600/70 hover:bg-gray-600/90 text-white px-3 py-1.5 rounded text-xs transition-colors"
 							>
 								Hide
 							</button>
 							<button
 								onClick={resetGame}
-								className="bg-red-600/70 hover:bg-red-600/90 text-white px-3 py-1 rounded text-sm transition-colors"
+								className="bg-red-600/70 hover:bg-red-600/90 text-white px-3 py-1.5 rounded text-xs transition-colors"
 							>
 								Reset
 							</button>

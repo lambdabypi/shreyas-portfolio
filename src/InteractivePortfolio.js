@@ -69,13 +69,13 @@ const PortfolioContent = () => {
 			<ConstellationClickerOverlay />
 
 			{/* Container */}
-			<div className="relative z-10 flex flex-col items-center justify-center min-h-screen has-menubar">
+			<div className="relative z-10 flex flex-col items-center justify-center min-h-screen">
 				{/* Main content area */}
-				<div className={`transition-opacity duration-800 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+				<div className={`transition-opacity duration-800 w-full flex flex-col items-center px-3 sm:px-4 pb-20 sm:pb-24 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
 					{renderActiveSection()}
 				</div>
 
-				{/* Navigation - Only shown outside intro */}
+				{/* Navigation */}
 				<GlassNavigation />
 
 				{/* Chat components */}

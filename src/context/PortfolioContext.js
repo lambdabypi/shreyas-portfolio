@@ -1,5 +1,5 @@
 // src/context/PortfolioContext.js
-import React, { createContext, useState, useRef, useEffect, useContext } from 'react';
+import { createContext, useState, useRef, useEffect, useContext } from 'react';
 import geminiServiceInstance from '../services/GeminiService';
 
 // Create context
@@ -146,7 +146,7 @@ export const PortfolioProvider = ({ children }) => {
 		}
 	};
 
-	// Handle key press for chat
+	// Handle key down for chat input
 	const handleKeyPress = (e) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
 			e.preventDefault();

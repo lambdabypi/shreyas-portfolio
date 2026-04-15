@@ -2,16 +2,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 
-const NavItem = ({ icon, label, section, active, onClick }) => (
+const NavItem = ({ icon, label, active, onClick }) => (
 	<button
 		onClick={onClick}
-		className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 ${active
+		title={label}
+		className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg transition-all duration-300 ${active
 			? 'bg-white/20 text-white shadow-md'
 			: 'text-white/70 hover:bg-white/10 hover:text-white'
 			}`}
 	>
 		{icon}
-		<span className="font-medium">{label}</span>
+		<span className="font-medium hidden sm:inline">{label}</span>
 	</button>
 );
 
@@ -36,9 +37,18 @@ export const GlassNavigation = () => {
 				showNav();
 			}
 		};
+		// Touch: show nav when user taps near the bottom of the screen
+		const handleTouchStart = (e) => {
+			const touch = e.touches[0];
+			if (touch && touch.clientY >= window.innerHeight - 80) {
+				showNav();
+			}
+		};
 		window.addEventListener('mousemove', handleMouseMove);
+		window.addEventListener('touchstart', handleTouchStart, { passive: true });
 		return () => {
 			window.removeEventListener('mousemove', handleMouseMove);
+			window.removeEventListener('touchstart', handleTouchStart);
 			clearTimeout(hideTimer.current);
 		};
 	}, []);
@@ -113,16 +123,15 @@ export const GlassNavigation = () => {
 			{/* ── Navbar ── */}
 			{visible && (
 				<div
-					className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
+					className="fixed bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-50 max-w-[calc(100vw-1rem)]"
 					onMouseLeave={scheduleHide}
 				>
-					<div className="flex items-center space-x-2 p-2 bg-gradient-to-r from-blue-600/80 to-purple-600/80 backdrop-blur-md rounded-xl shadow-lg">
+					<div className="flex items-center space-x-0.5 sm:space-x-2 p-1.5 sm:p-2 bg-gradient-to-r from-blue-600/80 to-purple-600/80 backdrop-blur-md rounded-xl shadow-lg overflow-x-auto">
 						{navItems.map((item) => (
 							<NavItem
 								key={item.section}
 								icon={item.icon}
 								label={item.label}
-								section={item.section}
 								active={activeSection === item.section}
 								onClick={() => changeSection(item.section)}
 							/>

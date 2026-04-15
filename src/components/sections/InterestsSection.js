@@ -12,7 +12,7 @@ const InterestsSection = () => {
 			<div className="w-full max-w-4xl bg-transparent backdrop-blur-lg rounded-lg shadow-lg flex flex-col border border-white/30">
 				<GlassHeader title="Interests & Hobbies" />
 
-				<div className="p-6 overflow-y-auto max-h-[80vh] glass-scrollbar">
+				<div className="p-6 overflow-y-auto max-h-[70vh] glass-scrollbar" style={{ maxHeight: 'min(70vh, 70dvh)' }}>
 					{/* Introduction */}
 					<div className="mb-8">
 						<p className="text-white mb-4">

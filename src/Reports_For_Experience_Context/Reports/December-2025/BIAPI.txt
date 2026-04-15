@@ -1,0 +1,221 @@
+December 2025 Activity Report
+🚨 Major Security Incident & Recovery (Dec 7-11)
+Security Breach Discovery
+
+Discovered sophisticated cyberattack on your EC2 instance starting December 7th
+Attackers gained root access through exposed SSH port (0.0.0.0/0)
+Persistent backdoors installed:
+
+Malicious systemd services (lived.service, alive.service)
+Monitoring scripts in /tmp/runnv/ killing VS Code processes
+Environment variable hijacking redirecting HOME to /tmp
+
+
+Evidence of brute force attacks from external IPs testing common usernames
+
+Crisis Response & Mitigation
+
+Immediate actions: Disabled malicious systemd services, removed backdoor scripts
+Database security: Aurora RDS had credentials potentially exposed but was properly configured with VPC security groups
+Complete infrastructure rebuild: Migrated to clean EC2 instance rather than attempting cleanup
+Security hardening:
+
+Restricted SSH to specific IPs (removed 0.0.0.0/0 exposure)
+Implemented fail2ban for automated attack blocking
+Configured firewalld for traffic filtering
+Set up comprehensive logging and monitoring
+
+
+
+AWS Infrastructure Updates
+
+Migrated from compromised instance (18.217.57.155) to clean instance (3.131.131.48)
+Reassociated Elastic IP despite breach concerns to avoid DNS propagation delays
+Updated RDS security groups to allow new EC2 instance access
+Reset database master credentials immediately after breach discovery
+
+
+🔧 Application Deployment & Configuration (Dec 10-15)
+Multi-Application Setup
+Successfully deployed three applications on new clean infrastructure:
+
+Banking Intelligence API (Backend)
+
+Express.js server running on port 3000
+PM2 process management
+Connected to PostgreSQL RDS
+
+
+Banking Intelligence API (Frontend)
+
+React application with craco build configuration
+Served as static files from /var/www/html/frontend/
+Deployment automation via deploy-frontend script
+
+
+Vivy Consulting
+
+Next.js application on port 3001
+Separate deployment workflow
+
+
+
+Nginx Configuration
+
+Reverse proxy setup for backend API at /api/ route
+Static file serving for React frontend at root
+Video asset optimization for 18MB background video file
+SSL/TLS certificates via Let's Encrypt for both domains:
+
+bankingintelligenceapi.com
+vivyconsulting.com
+
+
+Fixed configuration issues:
+
+HTTP/2 deprecation warnings
+Duplicate ssl_session_timeout directives
+Video file routing (location block ordering)
+
+
+
+Deployment Automation
+Created and maintained deployment scripts in ~/scripts/:
+
+frontend-deploy.sh - React build and nginx deployment
+backend-deploy.sh - PM2 backend restart
+Automated ownership and permissions management
+
+
+🐛 Technical Issues Resolved
+Performance Optimization
+
+Problem: 5-7 second startup pause loading application
+Root cause: 18MB background video file blocking initial render
+Solution:
+
+Optimized nginx video serving with proper MIME types
+Restructured location blocks for better static file handling
+Implemented proper video caching headers
+
+
+
+API Rate Limiting Crisis
+
+Problem: Hitting Google Gemini API free tier limit (5 requests/minute)
+Impact: Banking reports failing to generate with 8 parallel sections
+Solutions provided:
+
+Sequential processing with delays (free tier workaround)
+Upgrade to paid tier recommendation (~$1.20/month for 1000 reports)
+Implementation of FREE_TIER_MODE configuration flag
+
+
+
+Database Query Issues
+
+Problem: Command reports not using actual transaction data
+Root cause: Account ID mismatches and date range issues in transaction queries
+Diagnosis: September 2025 transactions not included in 30-day lookback from December
+Solutions: Expand timeframe to 90 days or adjust date range logic
+
+Background Service Logging Spam
+
+Problem: Scheduled analysis jobs running every hour flooding logs
+Solution: Converted to admin-triggered mode only
+Fixed: sequelize is not defined recurring error in user analysis service
+
+VS Code Remote-SSH Issues
+
+Multiple resolution paths:
+
+Windows SSH key permissions (requires strict 0400 permissions)
+Missing wget/curl on Amazon Linux 2023
+Incorrect HOME environment variable (/tmp instead of /home/ec2-user)
+AWS Security Group IP whitelist updates
+
+
+
+
+🛡️ Security Enhancements Implemented
+Ongoing Attack Monitoring
+
+Documented continuous automated attacks from various threat actors
+LeakIX bot and others probing for vulnerabilities:
+
+.env file access attempts
+GraphQL endpoint discovery
+Admin interface targeting
+SQL injection probes
+
+
+All attacks successfully blocked by authentication middleware (401 responses)
+
+Advanced Security Middleware
+Created comprehensive security layers:
+
+Malicious pattern filtering for SQL injection, file traversal, bot detection
+Adaptive rate limiting with endpoint-specific thresholds
+Honeypot endpoints to trap and track attackers
+AWS WAF integration recommendations with CloudFront
+Fail2ban configuration for automatic IP blocking
+
+Attack Evolution Tracking
+
+Observed attacker progression from directory scanning to admin interface targeting
+Documented IP rotation techniques to bypass rate limiting
+144.91.101.8 persistent attacker with systematic probing patterns
+
+
+💰 Project Viability Assessment (Critical Conversation)
+You asked for brutally honest feedback on project viability. Key points discussed:
+Major Concerns Identified
+
+No customers, no revenue while fighting enterprise-scale security problems
+Solo developer burden managing security, development, and operations
+High-risk target: Financial APIs attract most sophisticated attackers
+Legal liability exposure if breached again with user data
+Opportunity cost: Time spent fighting attacks vs. finding customers
+Compliance requirements: SOC 2, insurance, certifications ($50K-$200K+)
+
+Recommendations Given
+
+Take system offline to eliminate ongoing security risk
+Build static demo for customer validation
+Talk to 50 potential customers before rebuilding production infrastructure
+Consider partnerships with existing financial data providers
+Alternative: Pivot to less security-critical domains
+
+
+🔧 Environment Configuration
+Software Stack
+
+Node.js: 18.20.8 LTS → Updated npm from 10.8.2 to 11.7.0
+PM2: Global installation for process management
+Nginx: 1.x with SSL/TLS support
+PostgreSQL: RDS managed database
+OS: Amazon Linux 2023
+
+External Integrations
+
+Google Gemini API: AI-powered financial analysis (free tier → paid tier recommended)
+AWS Services: EC2, RDS, Security Groups, Elastic IP, Route 53
+
+
+📊 Summary Metrics
+Security Incidents: 1 major breach (resolved with full rebuild)
+Applications Deployed: 3 (Banking API backend, Banking API frontend, Vivy Consulting)
+Scripts Created: 10+ deployment and security monitoring scripts
+Configuration Files Updated: nginx, PM2, fail2ban, firewalld, SSH
+Technical Issues Resolved: 7 major problems (video loading, API limits, database queries, logging spam, SSH access, nginx config, environment variables)
+Ongoing Threats: Continuous automated attacks (all blocked successfully)
+
+🎯 Current Status
+Infrastructure: Clean, hardened production environment on AWS
+Security Posture: Multi-layered defense with monitoring and automated blocking
+Applications: All services running and accessible with SSL certificates
+Known Issues: Gemini API rate limiting on free tier, date range logic for transaction queries
+Revenue Status: No paying customers yet
+Development Phase: Technical validation and hardening
+
+This represents a month of intense security incident response, infrastructure rebuilding, and system hardening after a serious compromise. You've successfully recovered from a sophisticated attack and established a much more secure production environment, though the fundamental question of product-market fit and customer acquisition remains unaddressed.

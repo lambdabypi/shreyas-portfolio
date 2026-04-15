@@ -405,7 +405,7 @@ export const ChatAssistant = () => {
 			{/* Full Chat Window */}
 			{!minimized && (
 				<div
-					className="fixed bottom-24 right-6 z-30 w-96 h-[30rem] glass-chat rounded-xl shadow-2xl border border-white/20 flex flex-col overflow-hidden transition-all duration-500 transform origin-bottom-right"
+					className="fixed bottom-20 right-3 sm:bottom-24 sm:right-6 z-30 w-[calc(100vw-1.5rem)] sm:w-96 h-[min(30rem,calc(100vh-7rem))] glass-chat rounded-xl shadow-2xl border border-white/20 flex flex-col overflow-hidden transition-all duration-500 transform origin-bottom-right"
 					style={{
 						opacity: showingChat ? 1 : 0,
 						transform: showingChat ? 'scale(1)' : 'scale(0.9)'
@@ -529,7 +529,7 @@ export const ChatAssistant = () => {
 								type="text"
 								value={userMessage}
 								onChange={(e) => setUserMessage(e.target.value)}
-								onKeyPress={handleKeyPress}
+								onKeyDown={handleKeyPress}
 								className="glass-chat-input placeholder:text-gray-400/70 focus:placeholder:text-gray-400/50 transition-all"
 								placeholder="Ask about Shreyas or navigate..."
 								disabled={isProcessing}

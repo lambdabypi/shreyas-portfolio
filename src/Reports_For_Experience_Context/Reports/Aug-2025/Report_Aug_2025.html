@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Banking Intelligence API Monthly Development Report</title>
+	<style>
+		:root {
+			--primary: #6366f1;
+			--primary-dark: #4338ca;
+			--secondary: #0ea5e9;
+			--dark: #1e293b;
+			--light: #f8fafc;
+			--success: #22c55e;
+			--warning: #f59e0b;
+			--danger: #ef4444;
+		}
+
+		body {
+			font-family: 'Helvetica Neue', Arial, sans-serif;
+			line-height: 1.6;
+			color: #1e293b;
+			background-color: white;
+			margin: 0;
+			padding: 0;
+		}
+
+		.container {
+			max-width: 1000px;
+			margin: 0 auto;
+			padding: 20px;
+		}
+
+		header {
+			border-bottom: 2px solid var(--primary);
+			margin-bottom: 30px;
+			padding-bottom: 20px;
+			text-align: center;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: 24pt;
+			font-weight: 700;
+			color: var(--primary-dark);
+		}
+
+		.subtitle {
+			font-size: 14pt;
+			margin-top: 10px;
+			color: var(--dark);
+		}
+
+		h2 {
+			font-size: 18pt;
+			color: var(--primary-dark);
+			margin-top: 30px;
+			border-bottom: 1px solid #ddd;
+			padding-bottom: 5px;
+		}
+
+		h3 {
+			font-size: 14pt;
+			color: var(--dark);
+		}
+
+		.stats-container {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 20px;
+			margin-bottom: 30px;
+		}
+
+		.stat-card {
+			flex: 1;
+			min-width: 120px;
+			border: 1px solid #ddd;
+			padding: 15px;
+			text-align: center;
+		}
+
+		.stat-number {
+			font-size: 22pt;
+			font-weight: 700;
+			color: var(--primary);
+			margin: 10px 0;
+		}
+
+		.stat-label {
+			font-size: 10pt;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			font-weight: bold;
+		}
+
+		.timeline {
+			position: relative;
+			padding-left: 30px;
+			margin-bottom: 30px;
+		}
+
+		.timeline::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 0;
+			height: 100%;
+			width: 2px;
+			background-color: #ddd;
+		}
+
+		.timeline-item {
+			position: relative;
+			margin-bottom: 20px;
+			page-break-inside: avoid;
+		}
+
+		.timeline-dot {
+			position: absolute;
+			left: -30px;
+			top: 5px;
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			background-color: var(--primary);
+		}
+
+		.commit-date {
+			font-size: 10pt;
+			color: #666;
+			margin-bottom: 5px;
+		}
+
+		.commit-hash {
+			font-family: monospace;
+			color: var(--primary);
+			font-weight: 600;
+			margin-right: 10px;
+			font-size: 10pt;
+		}
+
+		.commit-message {
+			margin-top: 5px;
+			padding: 10px;
+			background-color: #f8f8f8;
+			border-radius: 4px;
+			font-size: 11pt;
+		}
+
+		.commit-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 5px;
+			margin-top: 8px;
+		}
+
+		.commit-tag {
+			padding: 2px 8px;
+			border-radius: 10px;
+			font-size: 9pt;
+			font-weight: 600;
+		}
+
+		.tag-feat {
+			background-color: #e0f2fe;
+			color: var(--secondary);
+		}
+
+		.tag-fix {
+			background-color: #dcfce7;
+			color: var(--success);
+		}
+
+		.tag-merge {
+			background-color: #e0e7ff;
+			color: var(--primary);
+		}
+
+		.tag-misc {
+			background-color: #fef3c7;
+			color: var(--warning);
+		}
+
+		.task-item {
+			display: flex;
+			align-items: flex-start;
+			background-color: #f8f8f8;
+			border-radius: 4px;
+			padding: 12px;
+			margin-bottom: 12px;
+			page-break-inside: avoid;
+		}
+
+		.task-status {
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			margin-right: 12px;
+			margin-top: 4px;
+		}
+
+		.status-pending {
+			background-color: var(--warning);
+		}
+
+		.status-in-progress {
+			background-color: var(--secondary);
+		}
+
+		.status-completed {
+			background-color: var(--success);
+		}
+
+		.task-content {
+			flex: 1;
+		}
+
+		.task-title {
+			font-weight: 600;
+			margin-bottom: 5px;
+			font-size: 12pt;
+		}
+
+		.task-description {
+			font-size: 10pt;
+			color: #555;
+		}
+
+		.task-eta {
+			font-size: 9pt;
+			background-color: #eee;
+			padding: 3px 6px;
+			border-radius: 3px;
+			margin-left: 10px;
+			white-space: nowrap;
+		}
+
+		.chart-container {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 20px;
+			margin-bottom: 30px;
+		}
+
+		.chart-card {
+			flex: 1;
+			min-width: 45%;
+			border: 1px solid #ddd;
+			padding: 15px;
+			text-align: center;
+			page-break-inside: avoid;
+		}
+
+		.chart-placeholder {
+			width: 100%;
+			height: 250px;
+			background-color: #f8f8f8;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 15px 0;
+			font-style: italic;
+			color: #666;
+		}
+
+		footer {
+			text-align: center;
+			padding: 20px;
+			font-size: 10pt;
+			color: #666;
+			border-top: 1px solid #eee;
+			margin-top: 40px;
+			page-break-inside: avoid;
+		}
+
+		.commit-image {
+			max-width: 100%;
+			margin-top: 10px;
+			page-break-inside: avoid;
+			text-align: center;
+		}
+
+		.commit-image img {
+			max-width: 80%;
+			max-height: 200px;
+			border: 1px solid #ddd;
+		}
+
+		figcaption {
+			font-size: 9pt;
+			color: #666;
+			margin-top: 5px;
+			text-align: center;
+		}
+
+		/* PDF-specific styles */
+		@media print {
+			body {
+				font-size: 10pt;
+				line-height: 1.4;
+			}
+
+			.container {
+				width: 100%;
+				max-width: 100%;
+				padding: 0;
+				margin: 0;
+			}
+
+			h1 {
+				font-size: 20pt;
+			}
+
+			h2 {
+				font-size: 16pt;
+				margin-top: 20px;
+				page-break-after: avoid;
+			}
+
+			h3 {
+				font-size: 12pt;
+				page-break-after: avoid;
+			}
+
+			.chart-placeholder {
+				border: 1px dashed #ccc;
+			}
+
+			/* Force page breaks where needed */
+			.task-roadmap {
+				page-break-before: always;
+			}
+
+			/* Avoid unwanted page breaks */
+			header,
+			footer,
+			.stat-card,
+			.chart-card,
+			.timeline-item,
+			.task-item {
+				page-break-inside: avoid;
+			}
+		}
+
+		/* Table for commit data */
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin: 20px 0;
+			font-size: 10pt;
+		}
+
+		th {
+			background-color: #f1f5f9;
+			text-align: left;
+			padding: 8px;
+			border-bottom: 2px solid #ddd;
+		}
+
+		td {
+			padding: 8px;
+			border-bottom: 1px solid #ddd;
+			vertical-align: top;
+		}
+
+		/* Additional PDF optimizations */
+		.print-only {
+			display: none;
+		}
+
+		@media print {
+			.print-only {
+				display: block;
+			}
+
+			.screen-only {
+				display: none;
+			}
+
+			a {
+				text-decoration: none;
+				color: #000;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<header>
+			<h1>Banking Intelligence API Development Report</h1>
+			<p class="subtitle">Activity for the month of August, 2025</p>
+		</header>
+
+		<div class="stats-container">
+			<div class="stat-card">
+				<div class="stat-label">Total Commits</div>
+				<div class="stat-number">13</div>
+				<div>Past Month</div>
+			</div>
+			<div class="stat-card">
+				<div class="stat-label">Pull Requests</div>
+				<div class="stat-number">5</div>
+				<div>Merged</div>
+			</div>
+			<div class="stat-card">
+				<div class="stat-label">Features</div>
+				<div class="stat-number">4</div>
+				<div>Implemented</div>
+			</div>
+			<div class="stat-card">
+				<div class="stat-label">Fixes</div>
+				<div class="stat-number">3</div>
+				<div>Applied</div>
+			</div>
+		</div>
+
+		<div class="chart-container">
+			<div class="chart-card">
+				<h3>Commit Distribution by Type</h3>
+				<div class="chart-placeholder">
+					<p>Commit Distribution Chart<br>
+						Features: 4 | Fixes: 3 | Merges: 5 | Misc: 1</p>
+				</div>
+			</div>
+			<div class="chart-card">
+				<h3>Weekly Commit Activity</h3>
+				<div class="chart-placeholder">
+					<p>Weekly Activity Chart<br>
+						Week 1: 0 | Week 2: 0 | Week 3: 11 | Week 4: 2</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="commit-timeline">
+			<h2>Commit Timeline</h2>
+			<div class="timeline">
+				<div class="timeline-item">
+					<div class="timeline-dot"></div>
+					<div class="commit-date">2 weeks ago</div>
+					<span class="commit-hash">849a3ac</span> <span>Shreyas Sreenivas</span>
+					<div class="commit-message">Added multiple UI fixes and new content</div>
+					<div class="commit-tags">
+						<span class="commit-tag tag-fix">FIX</span>
+						<span class="commit-tag tag-misc">UI</span>
+					</div>
+				</div>
+
+				<div class="timeline-item">
+					<div class="timeline-dot"></div>
+					<div class="commit-date">2 weeks ago</div>
+					<span class="commit-hash">af3909f</span> <span>Shreyas Sreenivas</span>
+					<div class="commit-message">FIX Added an expander for the data integration mode division</div>
+					<div class="commit-image">
+						<img src="images\data-integration-tab.png" alt="Data integration tab">
+						<figcaption>Data integration tab expansion</figcaption>
+					</div>
+					<div class="commit-tags">
+						<span class="commit-tag tag-fix">FIX</span>
+						<span class="commit-tag tag-misc">UI</span>
+					</div>
+				</div>
+
+				<div class="timeline-item">
+					<div class="timeline-dot"></div>
+					<div class="commit-date">4 weeks ago</div>
+					<span class="commit-hash">411f41f</span> <span>Shreyas Sreenivas</span>
+					<div class="commit-message">Merge pull request #39 from Claui-API/Updating-Documentation</div>
+					<div class="commit-tags">
+						<span class="commit-tag tag-merge">MERGE</span>
+					</div>
+				</div>
+
+				<div class="timeline-item">
+					<div class="timeline-dot"></div>
+					<div class="commit-date">4 weeks ago</div>
+					<span class="commit-hash">7fcf6cf</span> <span>Shreyas Sreenivas</span>
+					<div class="commit-message">Playground Mode and Documentation Additions FEAT:Added a direct
+						integration mode in the playground that allows users to test direct integration of data
+						(accounts and transactions) FEAT: Updated the Documentation to include direct integration
+						implementation. Added code examples MISC: Multiple UI changes</div>
+					<div class="commit-image">
+						<img src="images\data-integration-mode.png" alt="Data integration tab">
+						<figcaption>Data integration mode</figcaption>
+					</div>
+					<div class="commit-image">
+						<img src="images\documentation.png" alt="Data integration tab">
+						<figcaption>Documentation Sneak Peek</figcaption>
+					</div>
+					<div class="commit-tags">
+						<span class="commit-tag tag-feat">FEAT</span>
+						<span class="commit-tag tag-misc">DOCS</span>
+						<span class="commit-tag tag-misc">UI</span>
+					</div>
+				</div>
+
+				<div class="timeline-item">
+					<div class="timeline-dot"></div>
+					<div class="commit-date">4 weeks ago</div>
+					<span class="commit-hash">41942d3</span> <span>Shreyas Sreenivas</span>
+					<div class="commit-message">Merge pull request #38 from
+						Claui-API/37-revitalizing-the-way-responses-are-displayed-in-the-playground</div>
+					<div class="commit-tags">
+						<span class="commit-tag tag-merge">MERGE</span>
+					</div>
+				</div>
+
+				<!-- All other commits expanded for PDF -->
+				<div class="timeline-item">
+					<div class="timeline-dot"></div>
+					<div class="commit-date">4 weeks ago</div>
+					<span class="commit-hash">5ba6f14</span> <span>Shreyas Sreenivas</span>
+					<div class="commit-message">FEAT: Added three new DB models to store Bank User details
+						(Transactions and Accounts) FEAT: Added multiple test scripts FEAT: Modified frontend to
+						clear chat (playground)</div>
+					<div class="commit-tags">
+						<span class="commit-tag tag-feat">FEAT</span>
+						<span class="commit-tag tag-misc">DB</span>
+					</div>
+				</div>
+
+				<div class="timeline-item">
+					<div class="timeline-dot"></div>
+					<div class="commit-date">4 weeks ago</div>
+					<span class="commit-hash">fb7e51a</span> <span>Shreyas Sreenivas</span>
+					<div class="commit-message">Merge pull request #36 from Claui-API/35-prompt-revisions</div>
+					<div class="commit-tags">
+						<span class="commit-tag tag-merge">MERGE</span>
+					</div>
+				</div>
+
+				<div class="timeline-item">
+					<div class="timeline-dot"></div>
+					<div class="commit-date">4 weeks ago</div>
+					<span class="commit-hash">a270359</span> <span>Shreyas Sreenivas</span>
+					<div class="commit-message">Fixed the prompts to keep previous chats and responses and use in
+						following queries</div>
+					<div class="commit-tags">
+						<span class="commit-tag tag-fix">FIX</span>
+					</div>
+				</div>
+
+				<div class="timeline-item">
+					<div class="timeline-dot"></div>
+					<div class="commit-date">4 weeks ago</div>
+					<span class="commit-hash">fa0b4d7</span> <span>Shreyas Sreenivas</span>
+					<div class="commit-message">Merge pull request #34 from
+						Claui-API/33-optimize-frontend-for-mobile-view-main</div>
+					<div class="commit-tags">
+						<span class="commit-tag tag-merge">MERGE</span>
+					</div>
+				</div>
+
+				<div class="timeline-item">
+					<div class="timeline-dot"></div>
+					<div class="commit-date">4 weeks ago</div>
+					<span class="commit-hash">b4460be</span> <span>Shreyas Sreenivas</span>
+					<div class="commit-message">FIX: Added the mobile related UI fixes, and other UI fixes</div>
+					<div class="commit-image">
+						<img src="images/mobile-updates.png" alt="Mobile UI fixes screenshot"
+							style="max-width: 80%; border: 1px solid #ddd;">
+						<figcaption>Mobile view improvements showing responsive design changes</figcaption>
+					</div>
+					<div class="commit-tags">
+						<span class="commit-tag tag-fix">FIX</span>
+						<span class="commit-tag tag-misc">UI</span>
+					</div>
+				</div>
+
+				<div class="timeline-item">
+					<div class="timeline-dot"></div>
+					<div class="commit-date">4 weeks ago</div>
+					<span class="commit-hash">2908a45</span> <span>Shreyas Sreenivas</span>
+					<div class="commit-message">Merge pull request #32 from
+						Claui-API/29-optimize-frontend-for-mobile-view-as-well</div>
+					<div class="commit-tags">
+						<span class="commit-tag tag-merge">MERGE</span>
+					</div>
+				</div>
+
+				<div class="timeline-item">
+					<div class="timeline-dot"></div>
+					<div class="commit-date">4 weeks ago</div>
+					<span class="commit-hash">65f6f40</span> <span>Shreyas Sreenivas</span>
+					<div class="commit-message">.</div>
+					<div class="commit-tags">
+						<span class="commit-tag tag-misc">MISC</span>
+					</div>
+				</div>
+
+				<div class="timeline-item">
+					<div class="timeline-dot"></div>
+					<div class="commit-date">4 weeks ago</div>
+					<span class="commit-hash">0cf55b2</span> <span>Shreyas Sreenivas</span>
+					<div class="commit-message">.</div>
+					<div class="commit-tags">
+						<span class="commit-tag tag-misc">MISC</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Task roadmap with forced page break -->
+		<div class="task-roadmap">
+			<h2>This Month's Tasks</h2>
+			<div class="task-item">
+				<div class="task-status status-in-progress"></div>
+				<div class="task-content">
+					<div class="task-title">Implement Banking Intelligence Command as an Endpoint</div>
+					<div class="task-description">Create a new API endpoint that provides banking intelligence commands
+						for integration with third-party services.</div>
+				</div>
+				<div class="task-eta">ETA: September 20</div>
+			</div>
+
+			<div class="task-item">
+				<div class="task-status status-pending"></div>
+				<div class="task-content">
+					<div class="task-title">Create Authentication System for Banking Command API</div>
+					<div class="task-description">Develop secure authentication mechanisms for the new Banking
+						Intelligence Command API.</div>
+				</div>
+				<div class="task-eta">ETA: September 25</div>
+			</div>
+
+			<div class="task-item">
+				<div class="task-status status-pending"></div>
+				<div class="task-content">
+					<div class="task-title">Documentation for Banking Intelligence Command API</div>
+					<div class="task-description">Create comprehensive documentation for developers to integrate with
+						the new Banking Intelligence API.</div>
+				</div>
+				<div class="task-eta">ETA: September 28</div>
+			</div>
+
+			<div class="task-item">
+				<div class="task-status status-pending"></div>
+				<div class="task-content">
+					<div class="task-title">Testing Framework for Banking Intelligence API</div>
+					<div class="task-description">Develop automated testing for the Banking Intelligence Command API to
+						ensure reliability.</div>
+				</div>
+				<div class="task-eta">ETA: October 5</div>
+			</div>
+		</div>
+
+		<!-- Table summary for better printing -->
+		<div class="print-only">
+			<h2>Commit Summary</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Hash</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>2 weeks ago</td>
+						<td>849a3ac</td>
+						<td>FIX, UI</td>
+						<td>Added multiple UI fixes and new content</td>
+					</tr>
+					<tr>
+						<td>2 weeks ago</td>
+						<td>af3909f</td>
+						<td>FIX, UI</td>
+						<td>Added an expander for the data integration mode division</td>
+					</tr>
+					<tr>
+						<td>4 weeks ago</td>
+						<td>411f41f</td>
+						<td>MERGE</td>
+						<td>Merge pull request #39 from Claui-API/Updating-Documentation</td>
+					</tr>
+					<tr>
+						<td>4 weeks ago</td>
+						<td>7fcf6cf</td>
+						<td>FEAT, DOCS, UI</td>
+						<td>Playground Mode and Documentation Additions</td>
+					</tr>
+					<tr>
+						<td>4 weeks ago</td>
+						<td>41942d3</td>
+						<td>MERGE</td>
+						<td>Merge pull request #38</td>
+					</tr>
+					<tr>
+						<td>4 weeks ago</td>
+						<td>5ba6f14</td>
+						<td>FEAT, DB</td>
+						<td>Added three new DB models to store Bank User details</td>
+					</tr>
+					<tr>
+						<td>4 weeks ago</td>
+						<td>fb7e51a</td>
+						<td>MERGE</td>
+						<td>Merge pull request #36</td>
+					</tr>
+					<tr>
+						<td>4 weeks ago</td>
+						<td>a270359</td>
+						<td>FIX</td>
+						<td>Fixed the prompts to keep previous chats and responses</td>
+					</tr>
+					<tr>
+						<td>4 weeks ago</td>
+						<td>fa0b4d7</td>
+						<td>MERGE</td>
+						<td>Merge pull request #34</td>
+					</tr>
+					<tr>
+						<td>4 weeks ago</td>
+						<td>b4460be</td>
+						<td>FIX, UI</td>
+						<td>Added the mobile related UI fixes</td>
+					</tr>
+					<tr>
+						<td>4 weeks ago</td>
+						<td>2908a45</td>
+						<td>MERGE</td>
+						<td>Merge pull request #32</td>
+					</tr>
+					<tr>
+						<td>4 weeks ago</td>
+						<td>65f6f40</td>
+						<td>MISC</td>
+						<td>.</td>
+					</tr>
+					<tr>
+						<td>4 weeks ago</td>
+						<td>0cf55b2</td>
+						<td>MISC</td>
+						<td>.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<footer>
+			<p>Generated on September 4, 2025 • Clau-API, Banking Intelligence API Development</p>
+			<p>Shreyas Sreenivas</p>
+		</footer>
+	</div>
+</body>
+
+</html>

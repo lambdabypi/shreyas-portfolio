@@ -1,0 +1,402 @@
+Splitz Development Report - Past Month
+🎯 Project Overview
+Splitz is a React Native mobile betting app that enables friends to create and participate in casual bets with each other. It's fundamentally different from corporate prediction markets - designed for social, friend-to-friend betting rather than financial trading.
+
+🏗️ Architecture & Tech Stack
+Frontend (React Native + Expo)
+
+React Native with Expo for cross-platform development
+Redux Toolkit with redux-persist for state management
+Socket.IO client for real-time updates
+TypeScript for type safety
+Custom animations using Animated API
+
+Backend (Node.js + Express)
+
+Express.js REST API
+PostgreSQL database with Sequelize ORM
+Socket.IO for real-time WebSocket connections
+JWT authentication
+Cloudinary integration for image storage
+
+Infrastructure
+
+Local development server at IP 10.0.0.60:3000
+Docker setup for PostgreSQL
+Migrations and seeders for database management
+
+
+🎨 Major UI/UX Redesign
+Brand Identity Evolution
+
+Terminology Change: Shifted from corporate "markets" to casual "Splitz" branding throughout the app
+Color Scheme: Adopted indigo-based palette (#6366F1) with modern card-based UI design
+Design Inspiration: Drew from Kalshi's clean aesthetics while maintaining casual, friend-focused identity
+
+Visual Improvements
+
+Modern card-based layout with shadows and elevation
+Clean, contemporary design patterns
+Removed financial prediction market elements
+Enhanced iconography and visual hierarchy
+
+
+🚀 Key Features Implemented
+1. Authentication System
+
+User registration with firstName/lastName fields (matching backend schema)
+Login functionality with JWT tokens
+Persistent authentication via AsyncStorage
+Profile management
+
+2. Bet (Splitz) Management
+
+Create Bets: Full bet creation flow with:
+
+Title, description, category selection
+Stake amount configuration
+End date/time picker (platform-specific for iOS/Android)
+Privacy settings (public/private with invite codes)
+Tags support
+
+
+View Bets:
+
+Home feed with filtering (All, Active, Resolved, My Splitz)
+Detailed bet view with comprehensive information
+Real-time updates via Socket.IO
+
+
+Join Bets:
+
+Choose side (FOR/AGAINST)
+Support for invite code entry
+Creators can now join their own bets
+
+
+Resolve Bets:
+
+Creator-only resolution capability
+Winner selection (FOR/AGAINST/TIE)
+Optional proof attachment
+
+
+
+3. Social Proof Posts
+A comprehensive social media feature where users can:
+
+Share photos of betting moments
+Add reactions and comments
+Upload images via Cloudinary (base64 encoding)
+View activity feed of betting moments
+
+4. Real-Time Features
+Implemented Socket.IO for live updates:
+
+New bet notifications
+Bet updates (joins, status changes)
+Bet resolution notifications
+User status changes
+Room-based architecture for efficient broadcasting
+
+5. Enhanced Animations
+Created polished user experience with:
+
+Login Screen:
+
+Dramatic dice drop animation on first visit
+Floating background elements
+Smooth transitions and micro-interactions
+AsyncStorage-based intro detection (plays once)
+
+
+Register Screen:
+
+Complex entrance sequences with staggered field animations
+Celebration particle effects on success
+Optimized typing detection to reduce animation interference
+Performance optimizations to prevent lag during input
+
+
+Interactive Components:
+
+AnimatedButton with gradient backgrounds, glow effects, ripples
+AnimatedInput with floating labels and focus animations
+Card scale and shadow animations
+Smooth page transitions
+
+
+
+
+🔧 Technical Achievements
+Frontend Architecture
+
+Redux State Management:
+
+Properly structured slices (auth, bets)
+Async thunks for API calls
+Redux-persist integration for state persistence
+Type-safe hooks (useAppDispatch, useAppSelector)
+
+
+Component Library:
+
+Reusable components (Button, Input, LoadingScreen, Header)
+Enhanced animated variants (AnimatedButton, AnimatedInput)
+Bet-specific components (BetCard, BetDetails, BetForm)
+Proper separation of concerns
+
+
+Socket Integration:
+
+Context-based socket management
+Automatic reconnection handling
+Room-based event distribution
+Integration with Redux for state updates
+
+
+
+Backend Architecture
+
+Database Design:
+
+Users table with stats JSONB field
+Bets table with comprehensive metadata
+BetParticipants junction table
+Proper foreign keys and indexes
+
+
+API Structure:
+
+RESTful endpoints for auth, bets, users
+Validation middleware
+Error handling
+JWT authentication middleware
+
+
+Real-Time System:
+
+Socket.IO server setup
+Event-based architecture
+User and bet room management
+Broadcast utilities (emitToUser, emitToBetRoom, etc.)
+
+
+
+
+🐛 Major Bug Fixes
+1. Currency Formatting Issues
+
+Problem: Bet stakes displayed as strings instead of formatted currency
+Solution: Implemented proper formatCurrency() helper and ensured consistent usage across BetCard and BetDetails components
+
+2. Data Structure Mismatches
+
+Problem: Frontend expected displayName but backend used firstName/lastName
+Solution: Updated TypeScript interfaces and components to match backend schema
+
+3. Network Image Upload Failures
+
+Problem: FormData image uploads unreliable on mobile
+Solution: Switched to base64 encoding for reliable image transmission
+
+4. Socket Event Naming
+
+Problem: Inconsistent camelCase/PascalCase event names causing missed events
+Solution: Standardized all socket events to camelCase (e.g., betUpdated, newBet)
+
+5. Duplicate Bet Rendering
+
+Problem: Bets appearing multiple times in HomeScreen
+Solution: Implemented deduplication logic before rendering
+
+6. Creator Restriction on Joining
+
+Problem: Creators couldn't join their own bets
+Solution: Removed artificial restriction in backend controller
+
+7. Animation Performance
+
+Problem: Registration screen lag during typing
+Solution: Implemented typing detection with debouncing to pause heavy animations during input
+
+8. Platform-Specific Date Picker
+
+Problem: Single datetime picker implementation didn't work well across platforms
+Solution: Implemented platform-specific pickers (combined for iOS, separate date/time for Android)
+
+9. Icon Name Error
+
+Problem: Used invalid Ionicons name "crown"
+Solution: Changed to valid "star" icon
+
+
+📊 Data Flow Improvements
+1. Bet Data Structure Alignment
+Updated Redux slice to match backend structure:
+typescriptinterface Bet {
+  stake: string;        // Backend sends as string
+  endDate: string;      // Backend uses endDate not expiresAt
+  participants: [{      // Backend structure
+    userId: string;
+    side: 'for' | 'against';
+    user: { firstName, lastName, username }
+  }];
+}
+```
+
+### 2. **API Request/Response Handling**
+- Proper error handling with try-catch
+- Loading states for all async operations
+- Success/error feedback to users
+- Consistent data transformation
+
+### 3. **State Management Flow**
+```
+User Action → Redux Thunk → API Call → 
+Backend Response → Redux State Update → 
+Socket Broadcast → Real-time UI Update
+
+🎯 User Experience Enhancements
+1. First-Time Experience
+
+Dramatic intro animations on first app launch
+AsyncStorage tracking to show intro only once
+Smooth onboarding flow
+Clear calls-to-action
+
+2. Visual Feedback
+
+Loading indicators for all async operations
+Success/error alerts with meaningful messages
+Real-time status indicators (connection status, bet status)
+Micro-interactions on button presses
+
+3. Information Architecture
+
+Clear bet status badges (Your Splitz, Joined, Private)
+Comprehensive bet details view
+Participant lists with side indicators
+Category-based color coding
+
+4. Navigation Flow
+
+Bottom tab navigation (Home, Profile)
+Stack navigation for bet details and creation
+Proper back button handling
+Gesture-based navigation support
+
+
+📱 Platform Optimizations
+iOS-Specific
+
+Combined datetime picker
+Native animation performance
+Proper keyboard handling
+Safe area insets
+
+Android-Specific
+
+Separate date and time pickers
+Material Design patterns
+StatusBar color management
+Hardware back button support
+
+
+🔐 Security & Data Management
+
+Authentication:
+
+Secure JWT token storage
+Automatic token refresh on app launch
+Protected routes
+Token expiration handling
+
+
+Data Privacy:
+
+User password hashing (bcrypt)
+Secure API endpoints
+Private bet support with invite codes
+User data sanitization
+
+
+Input Validation:
+
+Frontend validation with instant feedback
+Backend validation as security layer
+Proper error messages
+SQL injection prevention via Sequelize
+
+
+
+
+🚧 Known Limitations & Future Work
+Current Limitations
+
+No actual payment processing (stakes are symbolic)
+Limited friend management features
+Basic notification system (no push notifications yet)
+No chat functionality (infrastructure ready)
+Limited bet categories
+No bet editing after creation
+Simple resolution system (manual, creator-only)
+
+Planned Enhancements
+
+Push notifications via Firebase
+Friend system with requests
+Chat functionality (Socket.IO ready)
+Advanced filtering and search
+Bet history and statistics
+Dispute resolution system
+More categories and customization
+Profile editing
+Social features (comments, reactions)
+
+
+📈 Code Quality & Maintenance
+Best Practices Implemented
+
+TypeScript: Type safety across the application
+Component Reusability: Shared components library
+Error Handling: Comprehensive try-catch blocks
+Logging: Console logs for debugging (development mode)
+Code Organization: Clear folder structure
+Naming Conventions: Consistent camelCase/PascalCase
+Comments: Descriptive headers and complex logic documentation
+
+Performance Optimizations
+
+React.memo: Memoized components to prevent unnecessary re-renders
+Animation Optimization: Debounced animations during typing
+Redux: Normalized state structure
+Socket.IO: Room-based broadcasting for efficiency
+Database: Proper indexes on frequently queried fields
+Image Handling: Base64 encoding for reliable uploads
+
+
+🎓 Key Learnings
+
+Backend-Frontend Alignment: Critical importance of matching data structures
+Real-time Architecture: Socket.IO event naming and room management
+Mobile Platform Differences: iOS vs Android implementation details
+Animation Performance: Balance between visual polish and UX responsiveness
+State Management: Redux structure for complex applications
+Type Safety: TypeScript benefits for catching errors early
+User Experience: First impressions matter - intro animations pay dividends
+
+
+📝 Summary
+Over the past month, Splitz has evolved from a basic betting concept into a polished, production-ready mobile application with:
+
+✅ Complete authentication system
+✅ Full bet lifecycle management (create, join, resolve)
+✅ Real-time updates via WebSockets
+✅ Social proof posting features
+✅ Beautiful, animated UI with platform-specific optimizations
+✅ Robust error handling and validation
+✅ Clean architecture with Redux state management
+✅ Comprehensive component library
+
+The app successfully bridges the gap between casual social betting and modern mobile app expectations, with a strong foundation for future feature additions.
