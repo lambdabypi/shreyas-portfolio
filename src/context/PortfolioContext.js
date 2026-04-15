@@ -34,6 +34,7 @@ export const PortfolioProvider = ({ children }) => {
 	const [hasScrolledToBottom, setHasScrolledToBottom] = useState(true);
 	const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
 	const [showNewMessageIndicator, setShowNewMessageIndicator] = useState(false);
+	const [chatResetKey, setChatResetKey] = useState(0);
 
 	// Contact form state
 	const [contactForm, setContactForm] = useState({
@@ -70,56 +71,32 @@ export const PortfolioProvider = ({ children }) => {
 	};
 
 	// Handle chat messages with dog personality
-	const handleSendMessage = async () => {
-		if (!userMessage.trim() || isProcessing) return;
+	const handleSendMessage = async (messageOverride = null) => {
+		const msgToSend = messageOverride !== null ? messageOverride.trim() : userMessage.trim();
+		if (!msgToSend || isProcessing) return;
 
-		// When user sends a message, we should scroll to bottom automatically
 		setShouldScrollToBottom(true);
 		setShowNewMessageIndicator(false);
+		setUserMessage('');
 
-		// Add user message with a unique id
-		const userMsg = userMessage.trim();
 		setChatMessages(prev => [...prev, {
 			id: prev.length,
 			sender: 'user',
-			message: userMsg,
+			message: msgToSend,
 			timestamp: new Date().toISOString()
 		}]);
-		setUserMessage('');
 
-		// Show typing indicator
 		setIsTyping(true);
 		setIsProcessing(true);
 
 		try {
-			// Process message with GeminiService
-			console.log(`📤 Sending message to GeminiService: "${userMsg}"`);
 			const { response, shouldNavigate, targetSection, mood } =
-				await geminiServiceInstance.generateResponse(userMsg);
+				await geminiServiceInstance.generateResponse(msgToSend);
 
-			// DEBUG: Log navigation details
-			console.log('🔍 Navigation Debug:', {
-				userMessage: userMsg,
-				shouldNavigate,
-				targetSection,
-				currentActiveSection: activeSection,
-				isAnimating,
-				isProcessing,
-				mood
-			});
-
-			// Handle navigation intents
 			if (shouldNavigate && targetSection) {
-				console.log(`🚀 Attempting to navigate to: ${targetSection} (after 500ms delay)`);
-				setTimeout(() => {
-					console.log(`🎯 Executing changeSection(${targetSection})`);
-					changeSection(targetSection);
-				}, 500);
-			} else {
-				console.log('❌ No navigation triggered:', { shouldNavigate, targetSection });
+				setTimeout(() => changeSection(targetSection), 500);
 			}
 
-			// Add bot response with mood
 			setChatMessages(prev => [...prev, {
 				id: prev.length,
 				sender: 'bot',
@@ -130,17 +107,15 @@ export const PortfolioProvider = ({ children }) => {
 			}]);
 		} catch (error) {
 			console.error('Error processing message:', error);
-			// Add error message with sad dog personality
 			setChatMessages(prev => [...prev, {
 				id: prev.length,
 				sender: 'bot',
-				message: "*whimpers softly* 🐕 Sorry, I'm having trouble understanding right now... *sad puppy eyes* Could you try asking me again? I really want to help! *hopeful tail wag*",
+				message: "*whimpers softly* 🐕 Sorry, I'm having trouble understanding right now... Could you try asking again? *hopeful tail wag*",
 				mood: 'sad',
 				isGeminiResponse: false,
 				timestamp: new Date().toISOString()
 			}]);
 		} finally {
-			// Reset typing indicators
 			setIsTyping(false);
 			setIsProcessing(false);
 		}
@@ -244,6 +219,7 @@ export const PortfolioProvider = ({ children }) => {
 				}
 			]);
 			setShouldScrollToBottom(true);
+			setChatResetKey(k => k + 1);
 			setShowNewMessageIndicator(false);
 		}
 	};
@@ -270,6 +246,7 @@ export const PortfolioProvider = ({ children }) => {
 		isTyping,
 		isProcessing,
 		showNewMessageIndicator,
+		chatResetKey,
 
 		// Chat functions
 		handleSendMessage,

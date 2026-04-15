@@ -1,6 +1,7 @@
 // src/components/layout/InteractiveBackground.js
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
+import constellationData from '../../data/constellationData';
 
 const InteractiveBackground = () => {
 	const { mousePosition } = usePortfolio();
@@ -18,77 +19,8 @@ const InteractiveBackground = () => {
 		unlockedConstellations: new Set()
 	});
 
-	// Constellation definitions - memoized to prevent re-creation
-	const constellations = useMemo(() => [
-		{
-			id: 'ursa-minor',
-			name: 'Little Dipper',
-			level: 5,
-			stars: [
-				{ x: 0.3, y: 0.2 }, { x: 0.32, y: 0.25 }, { x: 0.35, y: 0.3 },
-				{ x: 0.4, y: 0.32 }, { x: 0.38, y: 0.18 }, { x: 0.42, y: 0.15 }, { x: 0.45, y: 0.12 }
-			],
-			connections: [[0, 1], [1, 2], [2, 3], [0, 4], [4, 5], [5, 6]],
-			color: '#60A5FA'
-		},
-		{
-			id: 'cassiopeia',
-			name: 'Cassiopeia',
-			level: 10,
-			stars: [
-				{ x: 0.6, y: 0.25 }, { x: 0.65, y: 0.3 }, { x: 0.7, y: 0.22 },
-				{ x: 0.75, y: 0.28 }, { x: 0.8, y: 0.2 }
-			],
-			connections: [[0, 1], [1, 2], [2, 3], [3, 4]],
-			color: '#A78BFA'
-		},
-		{
-			id: 'orion',
-			name: 'Orion',
-			level: 15,
-			stars: [
-				{ x: 0.15, y: 0.6 }, { x: 0.2, y: 0.55 }, { x: 0.25, y: 0.65 },
-				{ x: 0.18, y: 0.7 }, { x: 0.22, y: 0.75 }, { x: 0.26, y: 0.78 }, { x: 0.3, y: 0.72 }
-			],
-			connections: [[0, 1], [1, 2], [0, 3], [3, 4], [4, 5], [5, 6], [2, 6]],
-			color: '#34D399'
-		},
-		{
-			id: 'draco',
-			name: 'Draco',
-			level: 20,
-			stars: [
-				{ x: 0.7, y: 0.7 }, { x: 0.72, y: 0.65 }, { x: 0.75, y: 0.6 },
-				{ x: 0.78, y: 0.55 }, { x: 0.8, y: 0.5 }, { x: 0.82, y: 0.45 },
-				{ x: 0.85, y: 0.4 }, { x: 0.88, y: 0.42 }, { x: 0.9, y: 0.38 }
-			],
-			connections: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8]],
-			color: '#F59E0B'
-		},
-		{
-			id: 'phoenix',
-			name: 'Phoenix',
-			level: 25,
-			stars: [
-				{ x: 0.45, y: 0.8 }, { x: 0.5, y: 0.75 }, { x: 0.55, y: 0.78 },
-				{ x: 0.52, y: 0.7 }, { x: 0.48, y: 0.65 }, { x: 0.58, y: 0.68 },
-				{ x: 0.6, y: 0.72 }, { x: 0.56, y: 0.6 }
-			],
-			connections: [[0, 1], [1, 2], [1, 3], [3, 4], [3, 5], [5, 6], [3, 7]],
-			color: '#EF4444'
-		},
-		{
-			id: 'corona',
-			name: 'Corona Borealis',
-			level: 30,
-			stars: [
-				{ x: 0.5, y: 0.3 }, { x: 0.48, y: 0.35 }, { x: 0.52, y: 0.35 },
-				{ x: 0.46, y: 0.4 }, { x: 0.54, y: 0.4 }, { x: 0.44, y: 0.45 }, { x: 0.56, y: 0.45 }
-			],
-			connections: [[0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6]],
-			color: '#F59E0B'
-		}
-	], []);
+	// Constellation definitions – imported from shared data file
+	const constellations = constellationData;
 
 	// Load game data from localStorage
 	useEffect(() => {
@@ -190,9 +122,13 @@ const InteractiveBackground = () => {
 				const constellation = constellations.find(c => c.id === constId);
 				if (!constellation) return;
 
+				const pxScale = constellation.placement.scale * Math.min(canvas.width, canvas.height) / 400;
+				const centX = constellation.stars.reduce((sum, s) => sum + s.x, 0) / constellation.stars.length;
+				const centY = constellation.stars.reduce((sum, s) => sum + s.y, 0) / constellation.stars.length;
+
 				constellation.stars.forEach((star, index) => {
-					const targetX = star.x * canvas.width;
-					const targetY = star.y * canvas.height;
+					const targetX = constellation.placement.cx * canvas.width  + (star.x - centX) * pxScale;
+					const targetY = constellation.placement.cy * canvas.height + (star.y - centY) * pxScale;
 
 					// Find available particle to assign as constellation star
 					const availableParticle = particles.current.find(p =>
@@ -380,7 +316,8 @@ const InteractiveBackground = () => {
 			window.removeEventListener('resize', handleResize);
 			cancelAnimationFrame(animationFrameId.current);
 		};
-	}, [dimensions, mousePosition, constellations]); // Removed gameData.unlockedConstellations dependency
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [dimensions, mousePosition]); // constellationData is a module-level constant — never changes
 
 	// Separate effect to handle constellation restoration when data changes
 	useEffect(() => {
@@ -405,9 +342,13 @@ const InteractiveBackground = () => {
 			const constellation = constellations.find(c => c.id === constId);
 			if (!constellation) return;
 
+			const pxScale = constellation.placement.scale * Math.min(canvas.width, canvas.height) / 400;
+			const centX = constellation.stars.reduce((sum, s) => sum + s.x, 0) / constellation.stars.length;
+			const centY = constellation.stars.reduce((sum, s) => sum + s.y, 0) / constellation.stars.length;
+
 			constellation.stars.forEach((star, index) => {
-				const targetX = star.x * canvas.width;
-				const targetY = star.y * canvas.height;
+				const targetX = constellation.placement.cx * canvas.width  + (star.x - centX) * pxScale;
+				const targetY = constellation.placement.cy * canvas.height + (star.y - centY) * pxScale;
 
 				// Find available particle to assign as constellation star
 				const availableParticle = particles.current.find(p =>
@@ -429,7 +370,8 @@ const InteractiveBackground = () => {
 				}
 			});
 		});
-	}, [gameData.unlockedConstellations, constellations]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [gameData.unlockedConstellations]); // constellationData is a module-level constant — never changes
 
 	return (
 		<>

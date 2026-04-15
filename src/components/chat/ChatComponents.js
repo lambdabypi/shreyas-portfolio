@@ -12,6 +12,13 @@ import {
 	ArrowRightIcon
 } from '../icons';
 
+const VISITOR_TYPE_THEME = {
+	recruiter:    { accent: '#3B82F6', border: 'border-blue-500/60',    badge: '👔 Recruiter mode',   badgeCls: 'bg-blue-500/20 text-blue-300 border-blue-500/30' },
+	developer:    { accent: '#10B981', border: 'border-emerald-500/60', badge: '👨‍💻 Dev mode',        badgeCls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+	collaborator: { accent: '#8B5CF6', border: 'border-purple-500/60',  badge: '🤝 Collab mode',      badgeCls: 'bg-purple-500/20 text-purple-300 border-purple-500/30' },
+	exploring:    { accent: '#F59E0B', border: 'border-amber-400/60',   badge: '👀 Exploring',         badgeCls: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
+};
+
 // Pixel Character Components
 const PixelDog = ({ mood = 'happy', isAnimating = false }) => {
 	const [frame, setFrame] = useState(0);
@@ -342,6 +349,39 @@ export const SuggestionButton = ({ text, onClick, disabled }) => {
 	);
 };
 
+const SUGGESTIONS_BY_TYPE = {
+	recruiter: [
+		{ text: '🚀 Top projects',  msg: 'Show me the top production projects' },
+		{ text: '💼 Experience',    msg: 'Tell me about work experience' },
+		{ text: '📄 Resume',        msg: 'How do I download the resume?' },
+		{ text: '✉️ Contact',       msg: 'How can I contact Shreyas?' },
+	],
+	developer: [
+		{ text: '🤖 MiniQuest arch', msg: 'How does the MiniQuest agent pipeline work technically?' },
+		{ text: '⚡ Tech stack',    msg: 'What is the full tech stack?' },
+		{ text: '🔮 AI projects',   msg: 'Tell me about the AI and LLM projects' },
+		{ text: '🐙 GitHub',        msg: 'What can I find on GitHub?' },
+	],
+	collaborator: [
+		{ text: '💡 Current work',  msg: 'What is Shreyas currently building?' },
+		{ text: '🎯 Interests',     msg: 'What kinds of projects interest Shreyas most?' },
+		{ text: '⚡ Skills',        msg: 'What skills does Shreyas bring to a team?' },
+		{ text: '✉️ Reach out',    msg: 'How can I reach Shreyas to discuss collaboration?' },
+	],
+	exploring: [
+		{ text: '🚀 Projects',      msg: 'Show me projects' },
+		{ text: '🥽 VR work',       msg: 'Tell me about the VR projects' },
+		{ text: '🧠 Skills',        msg: 'What are his skills?' },
+		{ text: '❤️ Interests',     msg: 'What are his interests outside work?' },
+	],
+	default: [
+		{ text: 'Projects',   msg: 'Show me projects' },
+		{ text: 'Skills',     msg: 'Go to skills' },
+		{ text: 'Experience', msg: 'Show experience' },
+		{ text: 'Contact',    msg: 'How can I contact Shreyas?' },
+	],
+};
+
 // Enhanced Chat Assistant Component with Pixel Characters
 export const ChatAssistant = () => {
 	const {
@@ -362,8 +402,11 @@ export const ChatAssistant = () => {
 		isTyping,
 		isProcessing,
 		formatTimestamp,
-		clearChatHistory
+		clearChatHistory,
+		chatResetKey,
 	} = usePortfolio();
+
+	const [visitorType, setVisitorType] = useState(() => sessionStorage.getItem('portfolioVisitorType'));
 
 	// Simplified animation state
 	const [showingChat, setShowingChat] = useState(false);
@@ -380,14 +423,18 @@ export const ChatAssistant = () => {
 		}
 	}, [userMessage]);
 
+	useEffect(() => {
+		if (chatResetKey > 0) {
+			sessionStorage.removeItem('portfolioVisitorType');
+			setVisitorType(null);
+		}
+	}, [chatResetKey]);
+
 	// Memoize the function to prevent recreation on each render
-	const handleSuggestion = useCallback((text) => {
+	const handleSuggestion = useCallback((msg) => {
 		if (isProcessing) return;
-		setUserMessage(text);
-		setTimeout(() => {
-			handleSendMessage();
-		}, 100);
-	}, [isProcessing, setUserMessage, handleSendMessage]);
+		handleSendMessage(msg);
+	}, [isProcessing, handleSendMessage]);
 
 	// SIMPLIFIED animation logic - no staggered effects
 	useEffect(() => {
@@ -408,7 +455,10 @@ export const ChatAssistant = () => {
 					className="fixed bottom-20 right-3 sm:bottom-24 sm:right-6 z-30 w-[calc(100vw-1.5rem)] sm:w-96 h-[min(30rem,calc(100vh-7rem))] glass-chat rounded-xl shadow-2xl border border-white/20 flex flex-col overflow-hidden transition-all duration-500 transform origin-bottom-right"
 					style={{
 						opacity: showingChat ? 1 : 0,
-						transform: showingChat ? 'scale(1)' : 'scale(0.9)'
+						transform: showingChat ? 'scale(1)' : 'scale(0.9)',
+						borderLeft: visitorType && VISITOR_TYPE_THEME[visitorType]
+							? `3px solid ${VISITOR_TYPE_THEME[visitorType].accent}`
+							: undefined,
 					}}
 				>
 					{/* Chatbot Header with Pixel Dog */}
@@ -421,8 +471,13 @@ export const ChatAssistant = () => {
 								</div>
 							</div>
 							<div>
-								<div className="text-lg font-bold text-black">Fido</div>
-								<div className="text-xs text-gray">Portfolio Assistant</div>
+								<div className="text-lg font-bold text-white">Fido</div>
+								<div className="text-xs text-gray-400">Portfolio Assistant</div>
+								{visitorType && VISITOR_TYPE_THEME[visitorType] && (
+									<div className={`text-xs px-1.5 py-0.5 rounded-full border mt-0.5 inline-block ${VISITOR_TYPE_THEME[visitorType].badgeCls}`}>
+										{VISITOR_TYPE_THEME[visitorType].badge}
+									</div>
+								)}
 							</div>
 							{/* User typing indicator in header */}
 							{userIsTyping && (
@@ -460,7 +515,7 @@ export const ChatAssistant = () => {
 					<div className="glass-chat-status">
 						<div className="flex items-center">
 							<div className="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse"></div>
-							<span className="text-sm text-black">Assistant Online</span>
+							<span className="text-sm text-white/70">Assistant Online</span>
 						</div>
 						{chatMessages.length > 1 && (
 							<span className="text-sm text-gray-400">{chatMessages.length} messages</span>
@@ -551,29 +606,47 @@ export const ChatAssistant = () => {
 							</button>
 						</div>
 
-						{/* Enhanced suggestion buttons */}
-						<div className="glass-chat-suggestions">
-							<SuggestionButton
-								text="Projects"
-								onClick={() => handleSuggestion("Show me projects")}
-								disabled={isProcessing}
-							/>
-							<SuggestionButton
-								text="Skills"
-								onClick={() => handleSuggestion("Go to skills")}
-								disabled={isProcessing}
-							/>
-							<SuggestionButton
-								text="Experience"
-								onClick={() => handleSuggestion("Show experience")}
-								disabled={isProcessing}
-							/>
-							<SuggestionButton
-								text="Contact"
-								onClick={() => handleSuggestion("How can I contact Shreyas?")}
-								disabled={isProcessing}
-							/>
-						</div>
+						{/* Visitor type selector (shown before type is chosen, when chat is fresh) */}
+						{visitorType === null && chatMessages.length <= 1 ? (
+							<div className="px-3 pb-3 pt-1 border-t border-white/10">
+								<p className="text-white/35 text-xs text-center mb-2 tracking-wide">What brings you here?</p>
+								<div className="grid grid-cols-2 gap-1.5">
+									{[
+										{ type: 'recruiter',    icon: '👔', label: 'Recruiting',   msg: "I'm a recruiter. Show me Shreyas's best production projects, work experience, and how to contact him." },
+										{ type: 'developer',    icon: '👨‍💻', label: 'Fellow dev',   msg: "I'm a developer. Walk me through Shreyas's most interesting technical projects and his AI/ML work." },
+										{ type: 'collaborator', icon: '🤝', label: 'Collaborate',  msg: "I'm interested in collaborating with Shreyas. What is he working on and what kind of projects interest him?" },
+										{ type: 'exploring',    icon: '👀', label: 'Just looking', msg: "I'm just exploring. Give me a quick fun overview of who Shreyas is and what's interesting in this portfolio." },
+									].map(({ type, icon, label, msg }) => (
+										<button
+											key={type}
+											disabled={isProcessing}
+											onClick={() => {
+												if (isProcessing) return;
+												sessionStorage.setItem('portfolioVisitorType', type);
+												setVisitorType(type);
+												handleSendMessage(msg);
+											}}
+											className="flex items-center gap-2 p-2.5 rounded-xl border border-white/12 bg-white/5 hover:bg-white/10 hover:border-white/22 transition-all duration-200 text-left group disabled:opacity-40"
+										>
+											<span className="text-base leading-none">{icon}</span>
+											<span className="text-white/75 text-xs font-medium group-hover:text-white/95 transition-colors leading-tight">{label}</span>
+										</button>
+									))}
+								</div>
+							</div>
+						) : (
+							/* Context-aware suggestion buttons */
+							<div className="glass-chat-suggestions">
+								{(SUGGESTIONS_BY_TYPE[visitorType] ?? SUGGESTIONS_BY_TYPE.default).map(({ text, msg }) => (
+									<SuggestionButton
+										key={text}
+										text={text}
+										onClick={() => handleSuggestion(msg)}
+										disabled={isProcessing}
+									/>
+								))}
+							</div>
+						)}
 					</div>
 				</div>
 			)}
