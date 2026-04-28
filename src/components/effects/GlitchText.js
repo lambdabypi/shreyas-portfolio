@@ -226,7 +226,7 @@ const GlitchJobTitle = () => {
 
 	return (
 		<div
-			className="text-xl text-blue-300 mb-8 font-medium relative"
+			className="text-base sm:text-xl text-blue-300 mb-4 sm:mb-8 font-medium relative"
 			style={{
 				minHeight: '1.75rem', // Prevent layout shift during transitions
 			}}
@@ -292,7 +292,7 @@ const GlitchEffects = () => {
 	return (
 		<div>
 			{/* Name with random glitch effect */}
-			<h1 className="text-5xl font-bold mb-4">
+			<h1 className="text-3xl sm:text-5xl font-bold mb-2 sm:mb-4">
 				<GlitchText
 					text="Shreyas Sreenivas"
 					intensity="medium"

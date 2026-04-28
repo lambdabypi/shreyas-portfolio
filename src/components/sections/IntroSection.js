@@ -23,9 +23,9 @@ const IntroSection = () => {
 	const { changeSection } = usePortfolio();
 
 	return (
-		<div className="max-w-4xl mx-auto px-4 py-6">
+		<div className="w-full max-w-4xl mx-auto px-4 py-4 sm:py-6 overflow-x-hidden">
 			{/* ── Top: Photo + Bio ─────────────────────────────────────────── */}
-			<div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-6">
+			<div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-4 sm:mb-6">
 				{/* Avatar */}
 				<div className="flex-shrink-0">
 					<div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-[3px] shadow-lg glow-effect">
@@ -43,7 +43,7 @@ const IntroSection = () => {
 				</div>
 
 				{/* Name + title + bio */}
-				<div className="text-center sm:text-left">
+				<div className="text-center sm:text-left w-full min-w-0">
 					<GlitchEffects />
 					<p className="mt-3 text-white/60 text-sm leading-relaxed max-w-lg">
 						Software engineer and AI builder, finishing my MS at Northeastern.
@@ -128,9 +128,9 @@ const IntroSection = () => {
 					<button
 						key={section}
 						onClick={() => changeSection(section)}
-						className="group text-left p-4 rounded-xl border border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10 hover:border-white/25 transition-all duration-200 hover:-translate-y-0.5"
+						className="group text-left p-3 sm:p-4 rounded-xl border border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10 hover:border-white/25 transition-all duration-200 hover:-translate-y-0.5"
 					>
-						<span className="text-2xl mb-2 block">{icon}</span>
+						<span className="text-xl sm:text-2xl mb-1 sm:mb-2 block">{icon}</span>
 						<span className="block text-white font-semibold text-sm">{label}</span>
 						<span className="block text-white/40 text-xs mt-0.5 group-hover:text-white/60 transition-colors">{desc}</span>
 					</button>
